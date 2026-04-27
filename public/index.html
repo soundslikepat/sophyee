@@ -1,3371 +1,784 @@
-# Sophye — Complete Source Code
-# One file. Every source file concatenated with path headers.
-# To use: extract each block into its correct path.
-
----
-
-## package.json
-
-```json
-{
-  "name": "sophye",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "mobile:build": "node scripts/mobile-build.mjs",
-    "mobile:open": "npx cap open ios",
-    "mobile:run": "npx cap run ios",
-    "mobile:sync": "npx cap sync ios"
-  },
-  "dependencies": {
-    "@capacitor/core": "^8.3.1",
-    "@capacitor/ios": "^8.3.1",
-    "@capacitor/splash-screen": "^8.0.1",
-    "@capacitor/status-bar": "^8.0.2",
-    "@fontsource/libre-baskerville": "^5.2.10",
-    "@fontsource/libre-franklin": "^5.2.8",
-    "@hookform/resolvers": "^5.2.2",
-    "clsx": "^2.1.1",
-    "framer-motion": "^12.38.0",
-    "lucide-react": "^1.8.0",
-    "next": "16.2.4",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "react-hook-form": "^7.73.1",
-    "tailwind-merge": "^3.5.0",
-    "zod": "^4.3.6",
-    "zustand": "^5.0.12"
-  },
-  "devDependencies": {
-    "@capacitor/cli": "^8.3.1",
-    "@netlify/plugin-nextjs": "^5.15.9",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.4",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sophye — Visual Walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,700;0,900;1,400&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --b:#0A0A0A;--w:#F5F4F0;--y:#E8F000;--ink:#3A3A3A;
+  --stone:#D0CFCB;--bg:#F0EFE9;--nb:#1A1A1A;--mg:#888;
+  --ff:'Libre Franklin','Franklin Gothic Medium',Arial,sans-serif;
+  --fs:'Libre Baskerville',Georgia,serif;
 }
-```
-
----
-
-## tsconfig.json
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "paths": {
-      "@/*": ["./*"]
-    }
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts"
-  ],
-  "exclude": ["node_modules"]
-}
-```
-
----
-
-## tailwind.config.ts
-
-```typescript
-import type { Config } from 'tailwindcss'
-
-const config: Config = {
-  content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
-  ],
-  theme: {
-    extend: {
-      colors: {
-        sophye: {
-          black:      '#0A0A0A',
-          white:      '#F5F4F0',
-          yellow:     '#E8F000',
-          ink:        '#3A3A3A',
-          stone:      '#D0CFCB',
-          'gray-bg':  '#F0EFE9',
-          'near-black': '#1A1A1A',
-          'mid-gray': '#888888',
-        },
-      },
-      fontFamily: {
-        franklin:    ['Libre Franklin', 'Franklin Gothic Medium', 'Arial Narrow', 'Arial', 'sans-serif'],
-        baskerville: ['Libre Baskerville', 'Georgia', 'serif'],
-        mono:        ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
-      },
-      fontSize: {
-        'display':  ['52px', { lineHeight: '0.95', letterSpacing: '-0.03em', fontWeight: '900' }],
-        'hero':     ['38px', { lineHeight: '1', letterSpacing: '-0.03em', fontWeight: '900' }],
-        'heading':  ['22px', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '700' }],
-        'subhead':  ['16px', { lineHeight: '1.3', letterSpacing: '-0.01em', fontWeight: '700' }],
-        'body':     ['14px', { lineHeight: '1.6', fontWeight: '400' }],
-        'small':    ['12px', { lineHeight: '1.5', fontWeight: '400' }],
-        'label':    ['10px', { lineHeight: '1.2', letterSpacing: '0.1em', fontWeight: '700' }],
-        'micro':    ['9px',  { lineHeight: '1.2', letterSpacing: '0.12em', fontWeight: '700' }],
-      },
-      borderRadius: {
-        'sophye-sm': '4px',
-        'sophye':    '8px',
-      },
-      borderWidth: {
-        '1.5': '1.5px',
-      },
-      spacing: {
-        '18': '4.5rem',
-        '22': '5.5rem',
-      },
-      animation: {
-        'fade-up':    'fadeUp 0.4s ease-out forwards',
-        'fade-in':    'fadeIn 0.3s ease-out forwards',
-        'scale-in':   'scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
-        'slide-right': 'slideRight 0.35s ease-out forwards',
-      },
-      keyframes: {
-        fadeUp: {
-          '0%':   { opacity: '0', transform: 'translateY(20px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        fadeIn: {
-          '0%':   { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        scaleIn: {
-          '0%':   { opacity: '0', transform: 'scale(0.95)' },
-          '100%': { opacity: '1', transform: 'scale(1)' },
-        },
-        slideRight: {
-          '0%':   { opacity: '0', transform: 'translateX(-10px)' },
-          '100%': { opacity: '1', transform: 'translateX(0)' },
-        },
-      },
-    },
-  },
-  plugins: [],
-}
-
-export default config
-```
-
----
-
-## postcss.config.mjs
-
-```javascript
-const config = {
-  plugins: {
-    "@tailwindcss/postcss": {},
-  },
-};
-
-export default config;
-```
-
----
-
-## eslint.config.mjs
-
-```javascript
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
-
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
-]);
-
-export default eslintConfig;
-```
-
----
-
-## next.config.ts
-
-```typescript
-// next.config.ts — web build (Vercel).
-// For the mobile build, next.mobile.config.ts is used via scripts/mobile-build.mjs.
-import type { NextConfig } from 'next'
-
-const nextConfig: NextConfig = {}
-
-export default nextConfig
-```
-
----
-
-## netlify.toml
-
-```toml
-[build]
-  command   = "npm run build"
-  publish   = ".next"
-
-[build.environment]
-  NODE_VERSION = "22"
-  NEXT_TELEMETRY_DISABLED = "1"
-
-# Netlify Next.js runtime — handles SSR, API routes, and image optimization
-# Install: https://www.npmjs.com/package/@netlify/plugin-nextjs
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
-
-# Environment variables — set these in Netlify dashboard:
-# Site → Site configuration → Environment variables
-#
-#   NEXT_PUBLIC_API_URL        = https://your-site.netlify.app
-#   NEXT_PUBLIC_APP_ENV        = production
-#   WALLET_TEAM_ID             = your_apple_team_id
-#   WALLET_PASS_TYPE_ID        = pass.io.sophye.creator
-#   WALLET_CERT_PASSWORD       = your_p12_password
-
-# Redirect root to app (handled by Next.js, but belt-and-suspenders)
-[[redirects]]
-  from   = "/"
-  to     = "/"
-  status = 200
-
-# SPA-style fallback for client-side routing
-[[redirects]]
-  from   = "/*"
-  to     = "/.netlify/functions/__render"
-  status = 200
-  force  = false
-```
-
----
-
-## types/index.ts
-
-```typescript
-export type PRO = 'ASCAP' | 'BMI' | 'SESAC' | 'PRS' | 'SOCAN' | 'GEMA' | 'APRA' | 'Other'
-
-export type CreatorRole =
-  | 'Songwriter'
-  | 'Producer'
-  | 'Topliner'
-  | 'Beatmaker'
-  | 'Lead Vocalist'
-  | 'Featured Artist'
-  | 'Session Musician'
-  | 'Mix Engineer'
-  | 'Mastering Engineer'
-  | 'A&R'
-  | 'Arranger'
-  | 'Conductor'
-  | 'Composer'
-  | 'Lyricist'
-
-export type OnboardingStep =
-  | 'account'
-  | 'name'
-  | 'roles'
-  | 'pro'
-  | 'confirmed'
-  | 'wallet'
-  | 'done'
-
-export interface Creator {
-  id: string
-  sophyeId: string          // SPH-XXXX-XXXX
-  handle: string            // URL-safe slug
-  legalName: string
-  stageName?: string
-  email: string
-  avatar?: string
-  roles: CreatorRole[]
-  pro?: PRO
-  proMemberId?: string
-  ipi?: string              // 00 000 000 250
-  isni?: string             // 0000 0001 2345 6789
-  publisherName?: string
-  publisherIPI?: string
-  isVerified: boolean
-  createdAt: string
-  sessions: Session[]
-  collaborators: string[]   // Creator IDs
-}
-
-export interface Session {
-  id: string
-  title: string
-  date: string
-  participants: SessionParticipant[]
-  status: 'draft' | 'confirmed' | 'registered'
-  isrcLinked?: string
-  iswcLinked?: string
-  rinGenerated: boolean
-}
-
-export interface SessionParticipant {
-  creatorId: string
-  legalName: string
-  stageName?: string
-  role: CreatorRole
-  splitPercent: number
-  pro?: PRO
-  ipi?: string
-  confirmed: boolean
-}
-
-export interface WalletPass {
-  passTypeIdentifier: string
-  serialNumber: string
-  sophyeId: string
-  legalName: string
-  stageName?: string
-  pro?: string
-  ipi?: string
-  roles: CreatorRole[]
-  sessionCount: number
-  isVerified: boolean
-  backgroundColor: string
-  foregroundColor: string
-  labelColor: string
-}
-
-export interface OnboardingState {
-  step: OnboardingStep
-  legalName: string
-  stageName: string
-  email: string
-  selectedRoles: CreatorRole[]
-  selectedPRO?: PRO
-  ipiInput: string
-  ipiVerified: boolean
-  sophyeId: string
-}
-
-export interface ProLookupResult {
-  found: boolean
-  legalName?: string
-  ipi?: string
-  pro?: PRO
-  isni?: string
-}
-```
-
----
-
-## lib/utils/index.ts
-
-```typescript
-import { type ClassValue, clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
-
-export function formatIPI(raw: string): string {
-  const digits = raw.replace(/\D/g, '')
-  if (digits.length <= 2) return digits
-  if (digits.length <= 5) return `${digits.slice(0, 2)} ${digits.slice(2)}`
-  if (digits.length <= 8) return `${digits.slice(0, 2)} ${digits.slice(2, 5)} ${digits.slice(5)}`
-  return `${digits.slice(0, 2)} ${digits.slice(2, 5)} ${digits.slice(5, 8)} ${digits.slice(8, 11)}`
-}
-
-export function formatISNI(raw: string): string {
-  const digits = raw.replace(/\D/g, '')
-  return digits.replace(/(.{4})/g, '$1 ').trim()
-}
-
-export function generateSophyeId(name: string): string {
-  const initials = name
-    .split(' ')
-    .map(w => w[0]?.toUpperCase() ?? '')
-    .join('')
-    .slice(0, 4)
-    .padEnd(4, 'X')
-
-  const num = Math.floor(1000 + Math.random() * 9000)
-  return `SPH-${num}-${initials}`
-}
-
-export function toHandle(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .trim()
-}
-
-export function formatSessionCount(n: number): string {
-  if (n === 0) return '0'
-  if (n < 10) return `0${n}`
-  return `${n}`
-}
-
-export function timeAgo(dateStr: string): string {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-  if (diffDays === 0) return 'Today'
-  if (diffDays === 1) return 'Yesterday'
-  if (diffDays < 7) return `${diffDays} days ago`
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`
-  return `${Math.floor(diffDays / 30)}mo ago`
-}
-
-export function splitPercentColor(pct: number): string {
-  if (pct >= 50) return '#0A0A0A'
-  if (pct >= 25) return '#3A3A3A'
-  return '#888888'
-}
-```
-
----
-
-## lib/data/mock.ts
-
-```typescript
-import type { Creator, Session } from '@/types'
-
-export const MOCK_CREATOR: Creator = {
-  id: 'creator-001',
-  sophyeId: 'SPH-2847-MSAN',
-  handle: 'maria-santos',
-  legalName: 'Maria Santos',
-  stageName: 'MARA',
-  email: 'maria@example.com',
-  roles: ['Songwriter', 'Producer', 'Lead Vocalist'],
-  pro: 'ASCAP',
-  proMemberId: 'A123456789',
-  ipi: '00 000 000 250',
-  isni: '0000 0001 2345 6789',
-  publisherName: 'Santos Music Publishing',
-  isVerified: true,
-  createdAt: '2024-09-14',
-  sessions: [],
-  collaborators: ['creator-002', 'creator-003'],
-}
-
-export const MOCK_SESSIONS: Session[] = [
-  {
-    id: 'session-001',
-    title: 'Golden Hour',
-    date: '2025-04-15',
-    participants: [
-      {
-        creatorId: 'creator-001',
-        legalName: 'Maria Santos',
-        stageName: 'MARA',
-        role: 'Songwriter',
-        splitPercent: 60,
-        pro: 'ASCAP',
-        ipi: '00 000 000 250',
-        confirmed: true,
-      },
-      {
-        creatorId: 'creator-002',
-        legalName: 'Jordan Blake',
-        role: 'Producer',
-        splitPercent: 40,
-        pro: 'BMI',
-        ipi: '00 000 012 847',
-        confirmed: true,
-      },
-    ],
-    status: 'confirmed',
-    isrcLinked: 'USRC12345001',
-    rinGenerated: true,
-  },
-  {
-    id: 'session-002',
-    title: 'Midnight Run',
-    date: '2025-04-10',
-    participants: [
-      {
-        creatorId: 'creator-001',
-        legalName: 'Maria Santos',
-        role: 'Songwriter',
-        splitPercent: 50,
-        pro: 'ASCAP',
-        ipi: '00 000 000 250',
-        confirmed: true,
-      },
-      {
-        creatorId: 'creator-003',
-        legalName: 'Sam Rivera',
-        role: 'Topliner',
-        splitPercent: 50,
-        pro: 'BMI',
-        confirmed: true,
-      },
-    ],
-    status: 'registered',
-    isrcLinked: 'USRC12345002',
-    rinGenerated: true,
-  },
-  {
-    id: 'session-003',
-    title: 'Unnamed track',
-    date: '2025-04-18',
-    participants: [
-      {
-        creatorId: 'creator-001',
-        legalName: 'Maria Santos',
-        role: 'Producer',
-        splitPercent: 100,
-        pro: 'ASCAP',
-        ipi: '00 000 000 250',
-        confirmed: true,
-      },
-    ],
-    status: 'draft',
-    rinGenerated: false,
-  },
-]
-
-export const PRO_OPTIONS = [
-  'ASCAP', 'BMI', 'SESAC', 'PRS', 'SOCAN', 'GEMA', 'APRA', 'Other',
-] as const
-
-export const ROLE_OPTIONS = [
-  'Songwriter',
-  'Producer',
-  'Topliner',
-  'Beatmaker',
-  'Lead Vocalist',
-  'Featured Artist',
-  'Session Musician',
-  'Mix Engineer',
-  'Mastering Engineer',
-  'Composer',
-  'Lyricist',
-  'Arranger',
-  'A&R',
-  'Conductor',
-] as const
-
-// Simulates IPI lookup from PRO database
-export function mockIPILookup(ipi: string): Promise<{ found: boolean; name?: string }> {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      if (ipi.replace(/\s/g, '').length >= 9) {
-        resolve({ found: true, name: 'Maria Santos' })
-      } else {
-        resolve({ found: false })
-      }
-    }, 1200)
-  })
-}
-```
-
----
-
-## lib/schemas/index.ts
-
-```typescript
-import { z } from 'zod'
-
-export const nameSchema = z.object({
-  legalName: z
-    .string()
-    .min(2, 'Legal name must be at least 2 characters')
-    .max(80, 'Name too long')
-    .regex(/^[a-zA-Z\s\-'.]+$/, 'Legal name should only contain letters'),
-  stageName: z
-    .string()
-    .max(60, 'Stage name too long')
-    .optional()
-    .or(z.literal('')),
-})
-
-export const emailSchema = z.object({
-  email: z
-    .string()
-    .email('Please enter a valid email address')
-    .min(1, 'Email is required'),
-})
-
-export const proSchema = z.object({
-  pro: z.enum(['ASCAP', 'BMI', 'SESAC', 'PRS', 'SOCAN', 'GEMA', 'APRA', 'Other']).optional(),
-  ipi: z
-    .string()
-    .regex(/^[\d\s]{0,14}$/, 'IPI should be numbers only')
-    .optional()
-    .or(z.literal('')),
-})
-
-export const rolesSchema = z.object({
-  roles: z
-    .array(z.string())
-    .min(1, 'Please select at least one role'),
-})
-
-export type NameFormData = z.infer<typeof nameSchema>
-export type EmailFormData = z.infer<typeof emailSchema>
-export type ProFormData = z.infer<typeof proSchema>
-export type RolesFormData = z.infer<typeof rolesSchema>
-```
-
----
-
-## lib/store/onboardingStore.ts
-
-```typescript
-'use client'
-
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import type { CreatorRole, PRO, OnboardingStep } from '@/types'
-import { generateSophyeId, toHandle } from '@/lib/utils'
-
-interface OnboardingStore {
-  step: OnboardingStep
-  legalName: string
-  stageName: string
-  email: string
-  selectedRoles: CreatorRole[]
-  selectedPRO: PRO | undefined
-  ipiInput: string
-  ipiVerified: boolean
-  sophyeId: string
-  handle: string
-
-  setStep: (step: OnboardingStep) => void
-  setLegalName: (name: string) => void
-  setStageName: (name: string) => void
-  setEmail: (email: string) => void
-  toggleRole: (role: CreatorRole) => void
-  setSelectedPRO: (pro: PRO | undefined) => void
-  setIPIInput: (ipi: string) => void
-  setIPIVerified: (verified: boolean) => void
-  generateIdentity: () => void
-  reset: () => void
-}
-
-const initialState = {
-  step: 'account' as OnboardingStep,
-  legalName: '',
-  stageName: '',
-  email: '',
-  selectedRoles: [] as CreatorRole[],
-  selectedPRO: undefined as PRO | undefined,
-  ipiInput: '',
-  ipiVerified: false,
-  sophyeId: '',
-  handle: '',
-}
-
-export const useOnboardingStore = create<OnboardingStore>()(
-  persist(
-    (set, get) => ({
-      ...initialState,
-
-      setStep: (step) => set({ step }),
-      setLegalName: (legalName) => set({ legalName }),
-      setStageName: (stageName) => set({ stageName }),
-      setEmail: (email) => set({ email }),
-
-      toggleRole: (role) => {
-        const { selectedRoles } = get()
-        if (selectedRoles.includes(role)) {
-          set({ selectedRoles: selectedRoles.filter(r => r !== role) })
-        } else {
-          set({ selectedRoles: [...selectedRoles, role] })
-        }
-      },
-
-      setSelectedPRO: (selectedPRO) => set({ selectedPRO }),
-      setIPIInput: (ipiInput) => set({ ipiInput }),
-      setIPIVerified: (ipiVerified) => set({ ipiVerified }),
-
-      generateIdentity: () => {
-        const { legalName } = get()
-        const sophyeId = generateSophyeId(legalName)
-        const handle = toHandle(legalName)
-        set({ sophyeId, handle })
-      },
-
-      reset: () => set(initialState),
-    }),
-    { name: 'sophye-onboarding' }
-  )
-)
-
-interface CreatorStore {
-  isLoggedIn: boolean
-  sessionCount: number
-  creditCount: number
-  collaboratorCount: number
-  login: () => void
-  logout: () => void
-}
-
-export const useCreatorStore = create<CreatorStore>((set) => ({
-  isLoggedIn: false,
-  sessionCount: 47,
-  creditCount: 23,
-  collaboratorCount: 12,
-  login: () => set({ isLoggedIn: true }),
-  logout: () => set({ isLoggedIn: false }),
-}))
-```
-
----
-
-## lib/capacitor/index.ts
-
-```typescript
-'use client'
-
-// Detects whether the app is running inside a Capacitor native shell (iOS app)
-// vs a standard web browser. Use this to conditionally load native plugins
-// or adjust UI behaviour for mobile.
-
-let _isNative: boolean | null = null
-
-export function isNative(): boolean {
-  if (_isNative !== null) return _isNative
-  // Capacitor sets window.Capacitor in native builds
-  if (typeof window === 'undefined') return false
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  _isNative = !!(window as any).Capacitor?.isNativePlatform?.()
-  return _isNative ?? false
-}
-
-export function isIOS(): boolean {
-  if (!isNative()) return false
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (window as any).Capacitor?.getPlatform?.() === 'ios'
-}
-
-export function getPlatform(): 'ios' | 'web' {
-  if (isIOS()) return 'ios'
-  return 'web'
-}
-
-// Use this to conditionally import Capacitor plugins:
-//
-//   if (isNative()) {
-//     const { SplashScreen } = await import('@capacitor/splash-screen')
-//     await SplashScreen.hide()
-//   }
-//
-// This prevents Capacitor plugin imports from crashing in the browser.
-```
-
----
-
-## app/globals.css
-
-```css
-@import '@fontsource/libre-franklin/400.css';
-@import '@fontsource/libre-franklin/500.css';
-@import '@fontsource/libre-franklin/700.css';
-@import '@fontsource/libre-franklin/900.css';
-@import '@fontsource/libre-baskerville/400-italic.css';
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  --sophye-black:      #0A0A0A;
-  --sophye-white:      #F5F4F0;
-  --sophye-yellow:     #E8F000;
-  --sophye-ink:        #3A3A3A;
-  --sophye-stone:      #D0CFCB;
-  --sophye-gray-bg:    #F0EFE9;
-  --sophye-near-black: #1A1A1A;
-  --sophye-mid-gray:   #888888;
-}
-
-@layer base {
-  html {
-    font-family: 'Libre Franklin', 'Franklin Gothic Medium', Arial, sans-serif;
-    background-color: #F5F4F0;
-    color: #0A0A0A;
-    -webkit-font-smoothing: antialiased;
-  }
-  ::selection { background: #E8F000; color: #0A0A0A; }
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: #F5F4F0; }
-  ::-webkit-scrollbar-thumb { background: #D0CFCB; border-radius: 2px; }
-}
-
-@layer components {
-  .yellow-bar { height: 3px; background: #E8F000; width: 100%; }
-  .sophye-divider { border: none; border-top: 1.5px solid #0A0A0A; }
-  .sophye-divider-light { border: none; border-top: 1px solid #D0CFCB; }
-
-  .text-display {
-    font-weight: 900;
-    font-size: clamp(36px, 6vw, 52px);
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-  }
-  .text-hero {
-    font-weight: 900;
-    font-size: clamp(28px, 4vw, 38px);
-    line-height: 1;
-    letter-spacing: -0.03em;
-  }
-  .text-label-upper {
-    font-weight: 700;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-  .text-accent-italic {
-    font-family: 'Libre Baskerville', Georgia, serif;
-    font-style: italic;
-  }
-  .text-mono-id {
-    font-family: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-  }
-  .sophye-card {
-    background: #F5F4F0;
-    border: 1.5px solid #0A0A0A;
-    border-radius: 8px;
-  }
-  .sophye-card-dark {
-    background: #0A0A0A;
-    border: 1.5px solid #0A0A0A;
-    border-radius: 8px;
-  }
-  .badge-verified {
-    display: inline-flex; align-items: center; gap: 5px;
-    background: #E8F000; color: #0A0A0A;
-    font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 3px 8px; border-radius: 2px;
-  }
-  .badge-dark {
-    display: inline-flex; align-items: center; gap: 5px;
-    background: #0A0A0A; color: #E8F000;
-    font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 3px 8px; border-radius: 2px;
-  }
-  .badge-outline {
-    display: inline-flex; align-items: center; gap: 5px;
-    background: transparent; color: #0A0A0A;
-    font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 2px 7px; border-radius: 2px; border: 1.5px solid #0A0A0A;
-  }
-}
-```
-
----
-
-## components/effects/YellowBar.tsx
-
-```typescript
-import { cn } from '@/lib/utils'
-
-export function YellowBar({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn('h-[3px] w-full bg-sophye-yellow flex-shrink-0', className)}
-    />
-  )
-}
-```
-
----
-
-## components/effects/SophyeMark.tsx
-
-```typescript
-import { cn } from '@/lib/utils'
-
-interface SophyeMarkProps {
-  size?: 'sm' | 'md' | 'lg' | 'xl'
-  inverted?: boolean
-  className?: string
-}
-
-const sizes = {
-  sm: { box: 'w-6 h-6 rounded-[4px]', text: 'text-sm' },
-  md: { box: 'w-9 h-9 rounded-[6px]', text: 'text-lg' },
-  lg: { box: 'w-12 h-12 rounded-[8px]', text: 'text-2xl' },
-  xl: { box: 'w-16 h-16 rounded-[8px]', text: 'text-3xl' },
-}
-
-export function SophyeMark({ size = 'md', inverted = false, className }: SophyeMarkProps) {
-  const s = sizes[size]
-  return (
-    <div
-      className={cn(
-        s.box,
-        'flex items-center justify-center flex-shrink-0 font-franklin font-black',
-        inverted
-          ? 'bg-sophye-white text-sophye-black'
-          : 'bg-sophye-black text-sophye-yellow',
-        className
-      )}
-    >
-      <span className={s.text} style={{ letterSpacing: '-0.04em' }}>S</span>
+html{background:#1a1a1a;font-family:var(--ff);-webkit-font-smoothing:antialiased}
+body{max-width:900px;margin:0 auto;padding:40px 24px 80px}
+
+/* ── CHROME ── */
+.page-title{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#555;margin-bottom:32px;display:flex;align-items:center;gap:12px}
+.page-title::after{content:'';flex:1;height:1px;background:#333}
+
+.section{margin-bottom:56px}
+.section-lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#555;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.tag{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:2px}
+.tag-y{background:var(--y);color:var(--b)}
+.tag-b{background:#222;color:#888;border:1px solid #333}
+.tag-w{background:var(--w);color:var(--b)}
+
+/* ── BROWSER ── */
+.browser{background:var(--w);border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.06),0 8px 40px rgba(0,0,0,.5)}
+.bar{background:#2a2a2a;padding:9px 14px;display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%}
+.url{flex:1;background:#1e1e1e;border-radius:4px;padding:4px 10px;font-size:10px;font-family:monospace;color:#666}
+
+/* ── PHONE ── */
+.phone-scene{background:#111;border-radius:12px;padding:16px;display:flex;justify-content:center;align-items:flex-start}
+.phone{width:210px;background:var(--w);border-radius:30px;overflow:hidden;box-shadow:0 0 0 1.5px rgba(255,255,255,.08),0 16px 48px rgba(0,0,0,.6)}
+.notch{height:22px;background:var(--b);border-radius:0 0 12px 12px;width:64px;margin:0 auto}
+.pscreen{padding:14px}
+
+/* ── SOPHYE PRIMITIVES ── */
+.ybar{height:3px;background:var(--y)}
+.smark{background:var(--b);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;color:var(--y);letter-spacing:-.04em;flex-shrink:0}
+.wordmark{display:flex;align-items:center;gap:8px;font-weight:900;letter-spacing:-.02em;color:var(--b)}
+.snav{padding:12px 20px;border-bottom:1px solid var(--stone);background:var(--w);display:flex;align-items:center;justify-content:space-between}
+
+/* ── BUTTONS ── */
+.by{background:var(--y);color:var(--b);font-family:var(--ff);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:10px 16px;border-radius:4px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.bb{background:var(--b);color:#fff;font-family:var(--ff);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:10px 16px;border-radius:4px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.bo{background:transparent;color:var(--b);font-family:var(--ff);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:9px 16px;border-radius:4px;border:1.5px solid var(--b);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+
+/* ── INPUT ── */
+.sinput{width:100%;padding:10px 12px;border:1.5px solid var(--stone);border-radius:4px;font-family:var(--ff);font-size:12px;color:var(--b);background:var(--w);outline:none;display:block}
+.sinput.active{border-color:var(--b)}
+.slabel{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);display:block;margin-bottom:5px}
+.shint{font-size:10px;color:var(--mg);margin-top:4px}
+
+/* ── PROGRESS ── */
+.prog{margin-bottom:24px}
+.prog-meta{display:flex;justify-content:space-between;margin-bottom:5px}
+.prog-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)}
+.prog-track{height:3px;background:var(--stone);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--y);border-radius:2px}
+
+/* ── BADGES ── */
+.bdg{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:2px}
+.bdg-y{background:var(--y);color:var(--b)}
+.bdg-b{background:var(--b);color:var(--y)}
+.bdg-o{background:transparent;color:var(--b);border:1.5px solid var(--b)}
+.dot5{width:5px;height:5px;border-radius:50%}
+
+/* ── WALLET CARD ── */
+.wcard{background:var(--b);border-radius:14px;overflow:hidden}
+.wbar{height:3px;background:var(--y)}
+.whdr{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center}
+.wbrand{display:flex;align-items:center;gap:6px}
+.ws{background:var(--y);border-radius:3px;display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--b);letter-spacing:-.04em;flex-shrink:0}
+.wtype{font-size:7px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#555}
+.wname-blk{padding:12px 16px 10px}
+.wname{font-weight:900;color:#fff;letter-spacing:-.02em;line-height:1;margin-bottom:4px}
+.wver{display:flex;align-items:center;gap:5px}
+.wvdot{width:5px;height:5px;border-radius:50%;background:var(--y)}
+.wvtxt{font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--y)}
+.wfields{padding:10px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;border-top:1px solid rgba(255,255,255,.06)}
+.wfl{font-size:7px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444;margin-bottom:2px}
+.wfv{font-size:11px;font-weight:700;color:#fff}
+.wfv-big{font-weight:900;color:#fff;letter-spacing:-.03em;line-height:1}
+.wqr{background:#111;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.wqr-box{background:#fff;border-radius:4px;padding:5px;flex-shrink:0}
+.wid{font-family:monospace;font-weight:700;color:#fff;letter-spacing:.02em;margin-bottom:2px}
+.wsub{font-size:8px;color:#555}
+
+/* ── ROLE TAGS ── */
+.ron{background:var(--b);color:var(--y);border:1.5px solid var(--b);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:6px 10px;border-radius:4px;display:inline-block;margin:2px}
+.roff{background:var(--w);color:var(--b);border:1.5px solid var(--b);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:6px 10px;border-radius:4px;display:inline-block;margin:2px}
+
+/* ── STATUS TAGS ── */
+.st-conf{background:var(--y);color:var(--b);font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:2px}
+.st-reg{background:var(--b);color:var(--y);font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:2px}
+.st-draft{background:var(--stone);color:var(--ink);font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:2px}
+
+/* ── DIVIDERS ── */
+.div-b{border:none;border-top:1.5px solid var(--b);margin:20px 0}
+.div-l{border:none;border-top:1px solid var(--stone);margin:12px 0}
+
+/* ── LAYOUT ── */
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.mcard{background:var(--w);border:1.5px solid var(--b);border-radius:8px}
+.mcard-dark{background:var(--b);border:1.5px solid var(--b);border-radius:8px}
+.stat-box{background:var(--bg);border-radius:6px;padding:18px;text-align:center}
+.mono{font-family:monospace;font-weight:700;letter-spacing:.04em}
+</style>
+</head>
+<body>
+
+<div class="page-title">Sophye — Full UI Walkthrough · 9 screens</div>
+
+<!-- ══════════════════════════════════════════
+     SCREEN 1 — LANDING
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-lbl">
+    Landing page — sophye.io
+    <span class="tag tag-y">Entry point</span>
+  </div>
+  <div class="browser">
+    <div class="bar">
+      <div class="dot" style="background:#FF5F57"></div>
+      <div class="dot" style="background:#FEBC2E"></div>
+      <div class="dot" style="background:#28C840"></div>
+      <div class="url">sophye.io</div>
     </div>
-  )
-}
-
-export function SophyeWordmark({
-  size = 'md',
-  inverted = false,
-  className,
-}: SophyeMarkProps) {
-  return (
-    <div className={cn('flex items-center gap-2.5', className)}>
-      <SophyeMark size={size} inverted={inverted} />
-      <span
-        className={cn(
-          'font-franklin font-black tracking-tight',
-          size === 'sm' && 'text-base',
-          size === 'md' && 'text-xl',
-          size === 'lg' && 'text-2xl',
-          size === 'xl' && 'text-3xl',
-          inverted ? 'text-sophye-white' : 'text-sophye-black'
-        )}
-        style={{ letterSpacing: '-0.02em' }}
-      >
-        Sophye
-      </span>
-    </div>
-  )
-}
-```
-
----
-
-## components/effects/AnimatedNumber.tsx
-
-```typescript
-'use client'
-
-import { useEffect, useRef, useState } from 'react'
-import { cn } from '@/lib/utils'
-
-interface AnimatedNumberProps {
-  value: number
-  duration?: number
-  className?: string
-  style?: React.CSSProperties
-}
-
-export function AnimatedNumber({ value, duration = 800, className, style }: AnimatedNumberProps) {
-  const [display, setDisplay] = useState(0)
-  const startRef = useRef<number | null>(null)
-  const rafRef = useRef<number | null>(null)
-
-  useEffect(() => {
-    if (value === 0) return
-    const start = (ts: number) => {
-      if (!startRef.current) startRef.current = ts
-      const elapsed = ts - startRef.current
-      const progress = Math.min(elapsed / duration, 1)
-      const eased = 1 - Math.pow(1 - progress, 3) // cubic ease-out
-      setDisplay(Math.round(eased * value))
-      if (progress < 1) {
-        rafRef.current = requestAnimationFrame(start)
-      }
-    }
-    rafRef.current = requestAnimationFrame(start)
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-      startRef.current = null
-    }
-  }, [value, duration])
-
-  return (
-    <span className={cn('font-franklin font-black', className)} style={style}>
-      {display}
-    </span>
-  )
-}
-```
-
----
-
-## components/ui/Button.tsx
-
-```typescript
-'use client'
-
-import { forwardRef } from 'react'
-import { cn } from '@/lib/utils'
-
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'outline'
-  size?: 'sm' | 'md' | 'lg'
-  fullWidth?: boolean
-  loading?: boolean
-  children: React.ReactNode
-}
-
-const variants = {
-  primary: 'bg-sophye-yellow text-sophye-black hover:bg-[#d4db00] font-franklin font-bold border-0',
-  secondary: 'bg-sophye-black text-sophye-white hover:bg-sophye-near-black font-franklin font-bold border-0',
-  ghost: 'bg-transparent text-sophye-black hover:bg-sophye-gray-bg font-franklin font-bold border-0',
-  outline: 'bg-transparent text-sophye-black border-[1.5px] border-sophye-black hover:bg-sophye-gray-bg font-franklin font-bold',
-}
-
-const sizes = {
-  sm: 'px-4 py-2 text-xs tracking-wide',
-  md: 'px-5 py-3 text-sm tracking-wide',
-  lg: 'px-6 py-4 text-sm tracking-wide',
-}
-
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'primary', size = 'md', fullWidth, loading, className, children, disabled, ...props }, ref) => {
-    return (
-      <button
-        ref={ref}
-        className={cn(
-          'inline-flex items-center justify-center rounded-[4px] transition-all duration-150 cursor-pointer uppercase tracking-wide',
-          'disabled:opacity-50 disabled:cursor-not-allowed',
-          'active:scale-[0.97]',
-          variants[variant],
-          sizes[size],
-          fullWidth && 'w-full',
-          className
-        )}
-        disabled={disabled || loading}
-        {...props}
-      >
-        {loading ? (
-          <span className="flex items-center gap-2">
-            <span className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
-            {children}
-          </span>
-        ) : children}
-      </button>
-    )
-  }
-)
-
-Button.displayName = 'Button'
-```
-
----
-
-## components/ui/Input.tsx
-
-```typescript
-'use client'
-
-import { forwardRef } from 'react'
-import { cn } from '@/lib/utils'
-
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string
-  hint?: string
-  error?: string
-  mono?: boolean
-}
-
-export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, hint, error, mono, className, ...props }, ref) => {
-    return (
-      <div className="w-full">
-        {label && (
-          <label className="block text-label-upper text-sophye-mid-gray mb-2">
-            {label}
-          </label>
-        )}
-        <input
-          ref={ref}
-          className={cn(
-            'w-full px-4 py-3 bg-sophye-white text-sophye-black',
-            'border-[1.5px] border-sophye-stone rounded-[4px]',
-            'font-franklin text-sm font-medium',
-            'transition-colors duration-150',
-            'placeholder:text-sophye-stone placeholder:font-normal',
-            'focus:outline-none focus:border-sophye-black',
-            'disabled:opacity-50 disabled:cursor-not-allowed',
-            error && 'border-red-500 focus:border-red-500',
-            mono && 'font-mono text-sm tracking-wider',
-            className
-          )}
-          {...props}
-        />
-        {hint && !error && (
-          <p className="mt-1.5 text-xs text-sophye-mid-gray">{hint}</p>
-        )}
-        {error && (
-          <p className="mt-1.5 text-xs text-red-500 font-medium">{error}</p>
-        )}
-      </div>
-    )
-  }
-)
-
-Input.displayName = 'Input'
-```
-
----
-
-## components/ui/Badge.tsx
-
-```typescript
-import { cn } from '@/lib/utils'
-
-interface BadgeProps {
-  variant?: 'yellow' | 'dark' | 'outline' | 'stone'
-  children: React.ReactNode
-  className?: string
-  dot?: boolean
-}
-
-const variants = {
-  yellow:  'bg-sophye-yellow text-sophye-black',
-  dark:    'bg-sophye-black text-sophye-yellow',
-  outline: 'bg-transparent text-sophye-black border-[1.5px] border-sophye-black',
-  stone:   'bg-sophye-gray-bg text-sophye-ink border border-sophye-stone',
-}
-
-export function Badge({ variant = 'yellow', children, className, dot }: BadgeProps) {
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center gap-1.5 px-2 py-0.5',
-        'text-[9px] font-franklin font-bold tracking-[0.1em] uppercase',
-        'rounded-[2px]',
-        variants[variant],
-        className
-      )}
-    >
-      {dot && (
-        <span className={cn(
-          'w-1.5 h-1.5 rounded-full flex-shrink-0',
-          variant === 'yellow' && 'bg-sophye-black',
-          variant === 'dark' && 'bg-sophye-yellow',
-          (variant === 'outline' || variant === 'stone') && 'bg-sophye-black',
-        )} />
-      )}
-      {children}
-    </span>
-  )
-}
-```
-
----
-
-## components/ui/Card.tsx
-
-```typescript
-import { cn } from '@/lib/utils'
-
-interface CardProps {
-  variant?: 'light' | 'dark' | 'yellow'
-  className?: string
-  children: React.ReactNode
-  onClick?: () => void
-}
-
-export function Card({ variant = 'light', className, children, onClick }: CardProps) {
-  return (
-    <div
-      onClick={onClick}
-      className={cn(
-        'rounded-[8px] border-[1.5px]',
-        variant === 'light' && 'bg-sophye-white border-sophye-black',
-        variant === 'dark'  && 'bg-sophye-black border-sophye-black',
-        variant === 'yellow' && 'bg-sophye-yellow border-sophye-black',
-        onClick && 'cursor-pointer transition-colors duration-150 hover:bg-sophye-gray-bg',
-        className
-      )}
-    >
-      {children}
-    </div>
-  )
-}
-
-export function StatCard({
-  label,
-  value,
-  className,
-}: {
-  label: string
-  value: string | number
-  className?: string
-}) {
-  return (
-    <div className={cn('bg-sophye-gray-bg rounded-[6px] p-4 text-center', className)}>
-      <p
-        className="font-franklin font-black text-sophye-black leading-none mb-1"
-        style={{ fontSize: 'clamp(24px, 4vw, 32px)', letterSpacing: '-0.03em' }}
-      >
-        {value}
-      </p>
-      <p className="text-label-upper text-sophye-mid-gray">{label}</p>
-    </div>
-  )
-}
-```
-
----
-
-## components/shared/Header.tsx
-
-```typescript
-import Link from 'next/link'
-import { SophyeWordmark } from '@/components/effects/SophyeMark'
-import { Button } from '@/components/ui/Button'
-
-interface HeaderProps {
-  variant?: 'default' | 'dark' | 'minimal'
-  showCTA?: boolean
-}
-
-export function Header({ variant = 'default', showCTA = true }: HeaderProps) {
-  const inverted = variant === 'dark'
-
-  return (
-    <header
-      className={`
-        w-full px-6 py-4 flex items-center justify-between
-        ${variant === 'dark' ? 'bg-sophye-black' : 'bg-sophye-white'}
-        border-b ${variant === 'dark' ? 'border-sophye-near-black' : 'border-sophye-stone'}
-      `}
-    >
-      <Link href="/">
-        <SophyeWordmark size="sm" inverted={inverted} />
-      </Link>
-
-      {showCTA && (
-        <div className="flex items-center gap-3">
-          <Link
-            href="/join"
-            className={`
-              text-xs font-franklin font-bold tracking-widest uppercase
-              transition-colors duration-150
-              ${inverted ? 'text-sophye-stone hover:text-white' : 'text-sophye-mid-gray hover:text-sophye-black'}
-            `}
-          >
-            Sign in
-          </Link>
-          <Link href="/join">
-            <Button variant="primary" size="sm">
-              Get started →
-            </Button>
-          </Link>
+    <div style="background:var(--w)">
+      <div class="ybar"></div>
+      <div class="snav">
+        <div class="wordmark" style="font-size:15px">
+          <div class="smark" style="width:28px;height:28px;font-size:14px">S</div>
+          Sophye
         </div>
-      )}
-    </header>
-  )
-}
-```
-
----
-
-## components/onboarding/ProgressBar.tsx
-
-```typescript
-'use client'
-
-import { motion } from 'framer-motion'
-
-const STEPS = ['Account', 'Name', 'Roles', 'PRO', 'Confirmed', 'Wallet']
-const STEP_WIDTHS = [16, 33, 50, 66, 83, 100]
-
-interface ProgressBarProps {
-  currentStep: number // 0-indexed
-}
-
-export function ProgressBar({ currentStep }: ProgressBarProps) {
-  const pct = STEP_WIDTHS[Math.min(currentStep, STEP_WIDTHS.length - 1)] ?? 16
-  const label = STEPS[currentStep] ?? ''
-
-  return (
-    <div className="w-full mb-8">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-label-upper text-sophye-mid-gray">
-          Step {currentStep + 1} of {STEPS.length}
-        </span>
-        <span className="text-label-upper text-sophye-mid-gray">{label}</span>
+        <div style="display:flex;gap:12px;align-items:center">
+          <span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Sign in</span>
+          <button class="by" style="font-size:10px;padding:8px 14px">Get started →</button>
+        </div>
       </div>
-      <div className="h-[3px] w-full bg-sophye-stone rounded-full overflow-hidden">
-        <motion.div
-          className="h-full bg-sophye-yellow"
-          initial={{ width: 0 }}
-          animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.35, ease: 'easeOut' }}
-        />
-      </div>
-    </div>
-  )
-}
-```
 
----
-
-## components/onboarding/RoleGrid.tsx
-
-```typescript
-'use client'
-
-import { motion } from 'framer-motion'
-import { cn } from '@/lib/utils'
-import type { CreatorRole } from '@/types'
-import { ROLE_OPTIONS } from '@/lib/data/mock'
-
-interface RoleGridProps {
-  selected: CreatorRole[]
-  onToggle: (role: CreatorRole) => void
-}
-
-export function RoleGrid({ selected, onToggle }: RoleGridProps) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {ROLE_OPTIONS.map((role, i) => {
-        const isSelected = selected.includes(role)
-        return (
-          <motion.button
-            key={role}
-            type="button"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.03, duration: 0.2 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onToggle(role)}
-            className={cn(
-              'px-3 py-2 rounded-[4px] border-[1.5px] cursor-pointer',
-              'text-xs font-franklin font-bold tracking-wide uppercase',
-              'transition-all duration-150',
-              isSelected
-                ? 'bg-sophye-black text-sophye-yellow border-sophye-black'
-                : 'bg-sophye-white text-sophye-black border-sophye-black hover:bg-sophye-gray-bg'
-            )}
-          >
-            {role}
-          </motion.button>
-        )
-      })}
-    </div>
-  )
-}
-```
-
----
-
-## components/wallet/WalletPassPreview.tsx
-
-```typescript
-import { Badge } from '@/components/ui/Badge'
-import type { CreatorRole, PRO } from '@/types'
-
-interface WalletPassPreviewProps {
-  legalName: string
-  stageName?: string
-  pro?: PRO
-  ipi?: string
-  roles: CreatorRole[]
-  sophyeId: string
-  sessionCount?: number
-  isVerified?: boolean
-}
-
-export function WalletPassPreview({
-  legalName,
-  stageName,
-  pro,
-  ipi,
-  roles,
-  sophyeId,
-  sessionCount = 0,
-  isVerified = false,
-}: WalletPassPreviewProps) {
-  const primaryRole = roles[0] ?? 'Creator'
-  const secondaryRole = roles[1]
-
-  return (
-    <div className="w-full max-w-[320px] mx-auto">
-      <div
-        className="rounded-[14px] overflow-hidden font-franklin"
-        style={{ background: '#0A0A0A' }}
-      >
-        {/* Yellow top bar */}
-        <div style={{ height: 3, background: '#E8F000' }} />
-
-        {/* Header */}
-        <div className="px-5 py-4 flex items-center justify-between border-b border-white/10">
-          <div className="flex items-center gap-2">
-            <div
-              className="w-6 h-6 rounded-[4px] flex items-center justify-center font-black text-xs"
-              style={{ background: '#E8F000', color: '#0A0A0A' }}
-            >
-              S
-            </div>
-            <span className="text-white text-sm font-black tracking-tight">Sophye</span>
+      <!-- Hero -->
+      <div style="padding:48px 48px 40px;display:grid;grid-template-columns:1fr 290px;gap:48px;align-items:center">
+        <div>
+          <div class="bdg bdg-b" style="margin-bottom:18px">
+            <div class="dot5" style="background:var(--y)"></div>
+            12,000+ creators · Free to start
           </div>
-          <span className="text-[9px] font-bold tracking-[0.1em] uppercase" style={{ color: '#555' }}>
-            Creator ID
-          </span>
-        </div>
-
-        {/* Name block */}
-        <div className="px-5 pt-4 pb-3">
-          <p
-            className="text-white font-black leading-none mb-2"
-            style={{ fontSize: 22, letterSpacing: '-0.02em' }}
-          >
-            {legalName}
+          <h1 style="font-family:var(--ff);font-weight:900;font-size:58px;line-height:.92;letter-spacing:-.035em;color:var(--b);margin-bottom:16px">
+            Your music<br>fingerprint.
+          </h1>
+          <p style="font-family:var(--fs);font-style:italic;font-size:20px;color:var(--ink);line-height:1.35;margin-bottom:24px">
+            One verified identity.<br>Every session, deal, and credit — yours forever.
           </p>
-          {isVerified && pro ? (
-            <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full" style={{ background: '#E8F000' }} />
-              <span
-                className="text-[9px] font-bold tracking-[0.08em] uppercase"
-                style={{ color: '#E8F000' }}
-              >
-                Verified · {pro}
-              </span>
-            </div>
-          ) : stageName ? (
-            <span className="text-xs font-medium" style={{ color: '#666' }}>
-              {stageName}
-            </span>
-          ) : null}
-        </div>
-
-        {/* Fields */}
-        <div
-          className="px-5 py-3 grid grid-cols-3 gap-3 border-t"
-          style={{ borderColor: 'rgba(255,255,255,0.08)' }}
-        >
-          <div>
-            <p className="text-[8px] font-bold tracking-[0.1em] uppercase mb-1" style={{ color: '#444' }}>
-              Roles
-            </p>
-            <p className="text-white text-xs font-bold">{primaryRole}</p>
-            {secondaryRole && (
-              <p className="text-xs font-medium" style={{ color: '#888' }}>{secondaryRole}</p>
-            )}
-          </div>
-          {ipi ? (
-            <div>
-              <p className="text-[8px] font-bold tracking-[0.1em] uppercase mb-1" style={{ color: '#444' }}>
-                IPI
-              </p>
-              <p className="text-white text-xs font-bold font-mono">{ipi.slice(0, 9)}</p>
-            </div>
-          ) : (
-            <div>
-              <p className="text-[8px] font-bold tracking-[0.1em] uppercase mb-1" style={{ color: '#444' }}>
-                PRO
-              </p>
-              <p className="text-white text-xs font-bold">{pro ?? '—'}</p>
-            </div>
-          )}
-          <div>
-            <p className="text-[8px] font-bold tracking-[0.1em] uppercase mb-1" style={{ color: '#444' }}>
-              Sessions
-            </p>
-            <p
-              className="text-white font-black leading-none"
-              style={{ fontSize: 22, letterSpacing: '-0.02em' }}
-            >
-              {sessionCount}
-            </p>
-          </div>
-        </div>
-
-        {/* QR strip */}
-        <div
-          className="px-5 py-4 flex items-center gap-4"
-          style={{ background: '#111' }}
-        >
-          {/* Mock QR */}
-          <div
-            className="w-[52px] h-[52px] rounded-[4px] flex-shrink-0 p-1.5"
-            style={{ background: '#fff' }}
-          >
-            <svg viewBox="0 0 40 40" className="w-full h-full">
-              <rect x="2" y="2" width="14" height="14" rx="2" fill="#0A0A0A"/>
-              <rect x="4" y="4" width="10" height="10" rx="1" fill="#fff"/>
-              <rect x="6" y="6" width="6" height="6" rx="0.5" fill="#0A0A0A"/>
-              <rect x="24" y="2" width="14" height="14" rx="2" fill="#0A0A0A"/>
-              <rect x="26" y="4" width="10" height="10" rx="1" fill="#fff"/>
-              <rect x="28" y="6" width="6" height="6" rx="0.5" fill="#0A0A0A"/>
-              <rect x="2" y="24" width="14" height="14" rx="2" fill="#0A0A0A"/>
-              <rect x="4" y="26" width="10" height="10" rx="1" fill="#fff"/>
-              <rect x="6" y="28" width="6" height="6" rx="0.5" fill="#0A0A0A"/>
-              <rect x="18" y="18" width="4" height="4" fill="#E8F000"/>
-              <rect x="24" y="18" width="4" height="4" fill="#0A0A0A"/>
-              <rect x="30" y="18" width="4" height="4" fill="#0A0A0A"/>
-              <rect x="36" y="18" width="4" height="4" fill="#0A0A0A"/>
-              <rect x="18" y="24" width="4" height="4" fill="#0A0A0A"/>
-              <rect x="30" y="24" width="4" height="4" fill="#0A0A0A"/>
-              <rect x="18" y="30" width="4" height="4" fill="#0A0A0A"/>
-              <rect x="24" y="30" width="4" height="4" fill="#E8F000"/>
-              <rect x="36" y="30" width="4" height="4" fill="#0A0A0A"/>
-            </svg>
+          <div style="display:flex;gap:10px;margin-bottom:24px">
+            <button class="by">Create your fingerprint →</button>
+            <button class="bo">See example profile</button>
           </div>
           <div>
-            <p className="text-white font-black text-sm font-mono tracking-wider mb-0.5">
-              {sophyeId}
-            </p>
-            <p className="text-[9px] font-medium" style={{ color: '#555' }}>
-              Scan to verify · sophye.io
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-```
-
----
-
-## components/native/SplashScreen.tsx
-
-```typescript
-'use client'
-
-import { useEffect } from 'react'
-import { isNative } from '@/lib/capacitor'
-
-// Drop this component into your root layout.
-// On iOS it hides the Capacitor splash screen once the React tree is mounted.
-// On web it's a no-op — renders nothing.
-export function NativeSplashScreen() {
-  useEffect(() => {
-    if (!isNative()) return
-
-    const hideSplash = async () => {
-      try {
-        const { SplashScreen } = await import('@capacitor/splash-screen')
-        await SplashScreen.hide({ fadeOutDuration: 300 })
-      } catch {
-        // Plugin not available — safe to ignore
-      }
-    }
-
-    // Small delay ensures the first paint has happened before hiding
-    const timer = setTimeout(hideSplash, 100)
-    return () => clearTimeout(timer)
-  }, [])
-
-  return null
-}
-```
-
----
-
-## components/native/StatusBar.tsx
-
-```typescript
-'use client'
-
-import { useEffect } from 'react'
-import { isNative } from '@/lib/capacitor'
-
-// Sets the iOS status bar style (light text on dark background).
-// Matches Sophye's dark nav bar and confirmed screen.
-export function NativeStatusBar() {
-  useEffect(() => {
-    if (!isNative()) return
-
-    const setStyle = async () => {
-      try {
-        const { StatusBar, Style } = await import('@capacitor/status-bar')
-        await StatusBar.setStyle({ style: Style.Dark })
-        await StatusBar.setBackgroundColor({ color: '#0A0A0A' })
-      } catch {
-        // Plugin not available — safe to ignore on web
-      }
-    }
-
-    setStyle()
-  }, [])
-
-  return null
-}
-```
-
----
-
-## app/layout.tsx
-
-```typescript
-import type { Metadata } from 'next'
-import './globals.css'
-import { NativeSplashScreen } from '@/components/native/SplashScreen'
-import { NativeStatusBar } from '@/components/native/StatusBar'
-
-export const metadata: Metadata = {
-  title: 'Sophye — Your music fingerprint',
-  description: 'One verified identity. Every session, deal, and credit — yours forever.',
-  manifest: '/manifest.json',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'black-translucent',
-    title: 'Sophye',
-  },
-  openGraph: {
-    title: 'Sophye',
-    description: 'Your music fingerprint.',
-    type: 'website',
-  },
-}
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" className="h-full">
-      <body className="min-h-full flex flex-col bg-sophye-white text-sophye-black antialiased">
-        {/* Native iOS: hides splash screen and sets status bar */}
-        <NativeSplashScreen />
-        <NativeStatusBar />
-        {children}
-      </body>
-    </html>
-  )
-}
-```
-
----
-
-## app/page.tsx
-
-```typescript
-export { default } from './LandingPage'
-```
-
----
-
-## app/LandingPage.tsx
-
-```typescript
-'use client'
-
-import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { YellowBar } from '@/components/effects/YellowBar'
-import { SophyeWordmark } from '@/components/effects/SophyeMark'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
-import { WalletPassPreview } from '@/components/wallet/WalletPassPreview'
-
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 24 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number,number,number,number], delay },
-})
-
-const CONNECTS = [
-  { cat: 'PROs', items: ['ASCAP', 'BMI', 'PRS', 'SOCAN', 'GEMA'] },
-  { cat: 'DAWs', items: ['Pro Tools', 'FL Studio', 'Ableton', 'Logic Pro', 'Cubase'] },
-  { cat: 'Distributors', items: ['DistroKid', 'TuneCore', 'CD Baby', 'Amuse', 'United Masters'] },
-  { cat: 'Identity', items: ['ISNI auto-register', 'IPI verification', 'SoundExchange', 'The MLC', 'PPL (UK)'] },
-  { cat: 'Business', items: ['Label onboarding', 'Publisher portals', 'DocuSign contracts', 'Management access', 'Sync licensing'] },
-  { cat: 'Platforms', items: ['Spotify credits', 'Apple Music', 'YouTube CMS', 'Boombox', 'Sound Credit'] },
-]
-
-export default function LandingPage() {
-  return (
-    <div className="min-h-screen flex flex-col bg-sophye-white">
-      <YellowBar />
-
-      {/* Nav */}
-      <nav className="px-6 md:px-12 py-5 flex items-center justify-between border-b border-sophye-stone">
-        <SophyeWordmark size="sm" />
-        <div className="flex items-center gap-4">
-          <Link href="/join" className="text-xs font-franklin font-bold tracking-widest uppercase text-sophye-mid-gray hover:text-sophye-black transition-colors">
-            Sign in
-          </Link>
-          <Link href="/join"><Button variant="primary" size="sm">Get started →</Button></Link>
-        </div>
-      </nav>
-
-      <main className="flex-1 px-6 md:px-12">
-        <div className="max-w-6xl mx-auto">
-
-          {/* Hero */}
-          <div className="pt-16 md:pt-24 pb-16 grid md:grid-cols-2 gap-12 md:gap-16 items-center">
-            <div>
-              <motion.div {...fadeUp(0)} className="mb-6">
-                <Badge variant="dark" dot>12,000+ creators · Free to start</Badge>
-              </motion.div>
-
-              <motion.h1 {...fadeUp(0.08)} className="font-franklin font-black text-sophye-black mb-6"
-                style={{ fontSize: 'clamp(40px, 7vw, 64px)', lineHeight: 0.93, letterSpacing: '-0.03em' }}>
-                Your music<br />fingerprint.
-              </motion.h1>
-
-              <motion.p {...fadeUp(0.16)} className="text-accent-italic text-sophye-ink mb-8 leading-snug"
-                style={{ fontSize: 'clamp(17px, 2vw, 22px)' }}>
-                One verified identity.<br />Every session, deal, and credit — yours forever.
-              </motion.p>
-
-              <motion.div {...fadeUp(0.24)} className="flex flex-col sm:flex-row gap-3 mb-10">
-                <Link href="/join">
-                  <Button variant="primary" size="lg" className="text-sm w-full sm:w-auto">
-                    Create your fingerprint →
-                  </Button>
-                </Link>
-                <Link href="/profile/maria-santos">
-                  <Button variant="outline" size="lg" className="text-sm w-full sm:w-auto">
-                    See example profile
-                  </Button>
-                </Link>
-              </motion.div>
-
-              <motion.div {...fadeUp(0.32)}>
-                {['No credit card', 'Under 3 minutes', 'Apple Wallet pass included'].map(item => (
-                  <div key={item} className="flex items-center gap-2 py-2 border-b border-sophye-stone last:border-0">
-                    <div className="w-1.5 h-1.5 rounded-full bg-sophye-yellow flex-shrink-0" />
-                    <span className="text-sm font-franklin text-sophye-ink">{item}</span>
-                  </div>
-                ))}
-              </motion.div>
+            <div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--stone)">
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--y)"></div>
+              <span style="font-size:13px;color:var(--ink)">No credit card</span>
             </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30, rotate: -1.5 }}
-              animate={{ opacity: 1, y: 0, rotate: -1.5 }}
-              transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="flex justify-center md:justify-end"
-            >
-              <WalletPassPreview
-                legalName="Maria Santos" stageName="MARA" pro="ASCAP"
-                ipi="00 000 250" roles={['Songwriter', 'Producer', 'Lead Vocalist']}
-                sophyeId="SPH-2847-MSAN" sessionCount={47} isVerified
-              />
-            </motion.div>
-          </div>
-
-          <div className="sophye-divider" />
-
-          {/* Connects section */}
-          <div className="py-16 md:py-20">
-            <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-              className="text-label-upper text-sophye-mid-gray mb-10">
-              Connects to your whole world
-            </motion.p>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {CONNECTS.map((group, i) => (
-                <motion.div key={group.cat}
-                  initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }} transition={{ delay: i * 0.07 }}
-                  className="sophye-card p-5">
-                  <p className="text-label-upper text-sophye-mid-gray mb-3">{group.cat}</p>
-                  {group.items.map(item => (
-                    <div key={item} className="flex items-center gap-2 py-1">
-                      <div className="w-1 h-1 rounded-full bg-sophye-stone flex-shrink-0" />
-                      <span className="text-sm font-franklin text-sophye-ink">{item}</span>
-                    </div>
-                  ))}
-                </motion.div>
-              ))}
+            <div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--stone)">
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--y)"></div>
+              <span style="font-size:13px;color:var(--ink)">Under 3 minutes</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:9px 0">
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--y)"></div>
+              <span style="font-size:13px;color:var(--ink)">Apple Wallet pass included</span>
             </div>
           </div>
-
-          <div className="sophye-divider" />
-
-          {/* Final CTA */}
-          <div className="py-20 text-center">
-            <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="font-franklin font-black text-sophye-black mb-3"
-              style={{ fontSize: 'clamp(40px, 6vw, 60px)', lineHeight: 0.95, letterSpacing: '-0.03em' }}>
-              Ready?
-            </motion.h2>
-            <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-              viewport={{ once: true }} transition={{ delay: 0.1 }}
-              className="text-accent-italic text-sophye-ink mb-8" style={{ fontSize: 20 }}>
-              Create your fingerprint in under 3 minutes.
-            </motion.p>
-            <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ delay: 0.2 }}>
-              <Link href="/join">
-                <Button variant="primary" size="lg" className="text-sm px-10">
-                  Create your fingerprint →
-                </Button>
-              </Link>
-            </motion.div>
-          </div>
         </div>
-      </main>
 
-      <footer className="border-t border-sophye-stone px-6 md:px-12 py-6 flex items-center justify-between">
-        <SophyeWordmark size="sm" />
-        <p className="text-xs text-sophye-mid-gray font-franklin">© 2025 Sophye. All rights reserved.</p>
-      </footer>
-    </div>
-  )
-}
-```
-
----
-
-## app/join/page.tsx
-
-```typescript
-'use client'
-
-import { useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { YellowBar } from '@/components/effects/YellowBar'
-import { SophyeWordmark } from '@/components/effects/SophyeMark'
-import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { emailSchema, type EmailFormData } from '@/lib/schemas'
-import { useOnboardingStore } from '@/lib/store/onboardingStore'
-
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4, delay, ease: [0.22, 1, 0.36, 1] as [number,number,number,number] },
-})
-
-function AppleIcon() {
-  return (
-    <svg width="14" height="16" viewBox="0 0 14 17" fill="currentColor">
-      <path d="M13.3 8.7c0-2.8 2.3-4.2 2.4-4.3-1.3-1.9-3.4-2.2-4.1-2.2-1.7-.2-3.4 1-4.3 1-.9 0-2.2-1-3.6-1-1.9 0-3.6 1.1-4.6 2.7-2 3.4-.5 8.4 1.4 11.1.9 1.3 2 2.8 3.5 2.8 1.4-.1 2-1 3.6-1 1.7 0 2.2 1 3.6 1 1.5 0 2.5-1.4 3.4-2.7.7-1 1.2-2 1.5-2.2-.1 0-2.8-1.2-2.8-4.2z"/>
-    </svg>
-  )
-}
-
-function GoogleIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24">
-      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-    </svg>
-  )
-}
-
-export default function JoinPage() {
-  const router = useRouter()
-  const { setEmail, setStep } = useOnboardingStore()
-  const [magicSent, setMagicSent] = useState(false)
-
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<EmailFormData>({
-    resolver: zodResolver(emailSchema),
-  })
-
-  const onSubmit = async (data: EmailFormData) => {
-    setEmail(data.email)
-    setStep('name')
-    await new Promise(r => setTimeout(r, 600))
-    setMagicSent(true)
-    setTimeout(() => router.push('/setup/name'), 1000)
-  }
-
-  const handleSSO = (provider: 'apple' | 'google') => {
-    setEmail(`demo@${provider}.com`)
-    setStep('name')
-    router.push('/setup/name')
-  }
-
-  return (
-    <div className="min-h-screen flex flex-col bg-sophye-white">
-      <YellowBar />
-      <nav className="px-6 py-4 flex items-center justify-between border-b border-sophye-stone">
-        <Link href="/"><SophyeWordmark size="sm" /></Link>
-        <Link href="/" className="text-xs font-franklin font-bold tracking-widest uppercase text-sophye-mid-gray hover:text-sophye-black transition-colors">
-          ← Back
-        </Link>
-      </nav>
-
-      <main className="flex-1 flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-sm">
-
-          <motion.div {...fadeUp(0)} className="mb-8">
-            <p className="text-label-upper text-sophye-mid-gray mb-3">Step 1 of 6</p>
-            <h1 className="font-franklin font-black text-sophye-black mb-2"
-              style={{ fontSize: 28, letterSpacing: '-0.02em' }}>
-              Create your account
-            </h1>
-            <p className="text-sm text-sophye-ink">Takes about 2 minutes. No credit card needed.</p>
-          </motion.div>
-
-          {/* SSO buttons */}
-          <motion.div {...fadeUp(0.1)} className="space-y-3 mb-6">
-            <button
-              onClick={() => handleSSO('apple')}
-              className="w-full flex items-center justify-center gap-3 px-5 py-3.5 bg-sophye-black text-sophye-white rounded-[4px] text-sm font-franklin font-bold tracking-wide uppercase hover:bg-sophye-near-black transition-colors"
-            >
-              <AppleIcon />
-              Continue with Apple
-            </button>
-            <button
-              onClick={() => handleSSO('google')}
-              className="w-full flex items-center justify-center gap-3 px-5 py-3.5 bg-sophye-white text-sophye-black rounded-[4px] text-sm font-franklin font-bold tracking-wide uppercase border-[1.5px] border-sophye-stone hover:border-sophye-black transition-colors"
-            >
-              <GoogleIcon />
-              Continue with Google
-            </button>
-          </motion.div>
-
-          {/* Divider */}
-          <motion.div {...fadeUp(0.2)} className="flex items-center gap-3 mb-6">
-            <div className="flex-1 h-px bg-sophye-stone" />
-            <span className="text-xs font-franklin text-sophye-mid-gray">or use email</span>
-            <div className="flex-1 h-px bg-sophye-stone" />
-          </motion.div>
-
-          {/* Email form */}
-          <motion.form {...fadeUp(0.25)} onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Input
-              label="Email address"
-              type="email"
-              placeholder="you@example.com"
-              error={errors.email?.message}
-              {...register('email')}
-            />
-            {magicSent ? (
-              <div className="w-full py-3.5 bg-sophye-yellow text-sophye-black text-center rounded-[4px] text-sm font-franklin font-bold tracking-wide uppercase">
-                ✓ Opening Sophye...
+        <!-- Wallet preview tilted -->
+        <div style="transform:rotate(-2.5deg);margin-top:16px">
+          <div class="wcard">
+            <div class="wbar"></div>
+            <div class="whdr">
+              <div class="wbrand">
+                <div class="ws" style="width:20px;height:20px;font-size:10px">S</div>
+                <span style="font-size:12px;font-weight:900;color:#fff;letter-spacing:-.01em">Sophye</span>
               </div>
-            ) : (
-              <Button
-                type="submit"
-                variant="primary"
-                size="md"
-                fullWidth
-                loading={isSubmitting}
-                className="text-sm"
-              >
-                Send magic link →
-              </Button>
-            )}
-            <p className="text-center text-xs text-sophye-mid-gray">No password needed · We email you a link</p>
-          </motion.form>
-
-          <motion.p {...fadeUp(0.35)} className="text-center text-xs text-sophye-mid-gray mt-6">
-            Already have an account?{' '}
-            <Link href="/dashboard" className="font-bold underline text-sophye-black">Sign in</Link>
-          </motion.p>
-        </div>
-      </main>
-    </div>
-  )
-}
-```
-
----
-
-## app/setup/layout.tsx
-
-```typescript
-import { YellowBar } from '@/components/effects/YellowBar'
-import { SophyeWordmark } from '@/components/effects/SophyeMark'
-import Link from 'next/link'
-
-export default function SetupLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen flex flex-col bg-sophye-white">
-      <YellowBar />
-      <nav className="px-6 py-4 flex items-center justify-between border-b border-sophye-stone">
-        <Link href="/"><SophyeWordmark size="sm" /></Link>
-        <span className="text-label-upper text-sophye-mid-gray">Setup</span>
-      </nav>
-      <main className="flex-1 flex flex-col">
-        {children}
-      </main>
-    </div>
-  )
-}
-```
-
----
-
-## app/setup/name/page.tsx
-
-```typescript
-'use client'
-
-import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { ProgressBar } from '@/components/onboarding/ProgressBar'
-import { Input } from '@/components/ui/Input'
-import { Button } from '@/components/ui/Button'
-import { nameSchema, type NameFormData } from '@/lib/schemas'
-import { useOnboardingStore } from '@/lib/store/onboardingStore'
-
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4, delay, ease: [0.22, 1, 0.36, 1] as [number,number,number,number] },
-})
-
-export default function SetupNamePage() {
-  const router = useRouter()
-  const { legalName, stageName, setLegalName, setStageName, setStep } = useOnboardingStore()
-
-  const { register, handleSubmit, formState: { errors } } = useForm<NameFormData>({
-    resolver: zodResolver(nameSchema),
-    defaultValues: { legalName, stageName },
-  })
-
-  const onSubmit = (data: NameFormData) => {
-    setLegalName(data.legalName)
-    setStageName(data.stageName ?? '')
-    setStep('roles')
-    router.push('/setup/roles')
-  }
-
-  return (
-    <div className="flex-1 flex items-center justify-center px-6 py-12">
-      <div className="w-full max-w-sm">
-        <ProgressBar currentStep={1} />
-
-        <motion.div {...fadeUp(0)}>
-          <p className="text-label-upper text-sophye-mid-gray mb-3">Your identity</p>
-          <h1 className="font-franklin font-black text-sophye-black mb-2"
-            style={{ fontSize: 28, letterSpacing: '-0.02em' }}>
-            What&apos;s your name?
-          </h1>
-          <p className="text-sm text-sophye-ink mb-8">
-            Your legal name is used for royalties. Your stage name is what collaborators see.
-          </p>
-        </motion.div>
-
-        <motion.form {...fadeUp(0.12)} onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          <Input
-            label="Legal name"
-            placeholder="Maria Santos"
-            hint="Used for PRO registration and split sheets"
-            error={errors.legalName?.message}
-            {...register('legalName')}
-          />
-          <Input
-            label="Stage name (optional)"
-            placeholder="MARA"
-            hint="What collaborators and studios will see"
-            error={errors.stageName?.message}
-            {...register('stageName')}
-          />
-
-          <div className="pt-2 flex gap-3">
-            <Button type="button" variant="outline" size="md" onClick={() => router.back()} className="flex-none text-sm">
-              ← Back
-            </Button>
-            <Button type="submit" variant="primary" size="md" fullWidth className="text-sm">
-              Continue →
-            </Button>
-          </div>
-        </motion.form>
-      </div>
-    </div>
-  )
-}
-```
-
----
-
-## app/setup/roles/page.tsx
-
-```typescript
-'use client'
-
-import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { ProgressBar } from '@/components/onboarding/ProgressBar'
-import { RoleGrid } from '@/components/onboarding/RoleGrid'
-import { Button } from '@/components/ui/Button'
-import { useOnboardingStore } from '@/lib/store/onboardingStore'
-import type { CreatorRole } from '@/types'
-
-export default function SetupRolesPage() {
-  const router = useRouter()
-  const { selectedRoles, toggleRole, setStep } = useOnboardingStore()
-
-  const handleContinue = () => {
-    if (selectedRoles.length === 0) return
-    setStep('pro')
-    router.push('/setup/pro')
-  }
-
-  return (
-    <div className="flex-1 flex items-start justify-center px-6 py-12">
-      <div className="w-full max-w-lg">
-        <ProgressBar currentStep={2} />
-
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <p className="text-label-upper text-sophye-mid-gray mb-3">Your roles</p>
-          <h1
-            className="font-franklin font-black text-sophye-black mb-2"
-            style={{ fontSize: 28, letterSpacing: '-0.02em' }}
-          >
-            What do you create?
-          </h1>
-          <p className="text-sm text-sophye-ink mb-8">
-            Select all that apply. These become your default roles on every session.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="mb-8"
-        >
-          <RoleGrid
-            selected={selectedRoles}
-            onToggle={(role) => toggleRole(role as CreatorRole)}
-          />
-        </motion.div>
-
-        {/* Selection count */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="mb-6 pb-4 border-b border-sophye-stone flex items-center gap-2"
-        >
-          {selectedRoles.length > 0 ? (
-            <>
-              <div className="w-4 h-4 rounded-full bg-sophye-yellow flex items-center justify-center flex-shrink-0">
-                <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
-                  <path d="M1 3L3 5L7 1" stroke="#0A0A0A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <span class="wtype">Creator ID</span>
+            </div>
+            <div class="wname-blk">
+              <div class="wname" style="font-size:20px">Maria Santos</div>
+              <div class="wver"><div class="wvdot"></div><span class="wvtxt">Verified · ASCAP</span></div>
+            </div>
+            <div class="wfields">
+              <div>
+                <div class="wfl">Roles</div>
+                <div class="wfv" style="font-size:10px">Songwriter</div>
+                <div style="font-size:9px;color:#666;font-weight:500;margin-top:2px">Producer</div>
+              </div>
+              <div>
+                <div class="wfl">IPI</div>
+                <div class="wfv mono" style="font-size:9px">00 000 250</div>
+              </div>
+              <div>
+                <div class="wfl">Sessions</div>
+                <div class="wfv-big" style="font-size:26px">47</div>
+              </div>
+            </div>
+            <div class="wqr">
+              <div class="wqr-box" style="width:44px;height:44px">
+                <svg viewBox="0 0 36 36" style="width:100%;height:100%">
+                  <rect x="1" y="1" width="12" height="12" rx="2" fill="#0A0A0A"/>
+                  <rect x="3" y="3" width="8" height="8" rx="1" fill="#fff"/>
+                  <rect x="4" y="4" width="6" height="6" fill="#0A0A0A"/>
+                  <rect x="21" y="1" width="12" height="12" rx="2" fill="#0A0A0A"/>
+                  <rect x="23" y="3" width="8" height="8" rx="1" fill="#fff"/>
+                  <rect x="24" y="4" width="6" height="6" fill="#0A0A0A"/>
+                  <rect x="1" y="21" width="12" height="12" rx="2" fill="#0A0A0A"/>
+                  <rect x="3" y="23" width="8" height="8" rx="1" fill="#fff"/>
+                  <rect x="4" y="24" width="6" height="6" fill="#0A0A0A"/>
+                  <rect x="15" y="15" width="4" height="4" fill="#E8F000"/>
+                  <rect x="21" y="15" width="3" height="3" fill="#0A0A0A"/>
+                  <rect x="26" y="15" width="3" height="3" fill="#0A0A0A"/>
+                  <rect x="15" y="21" width="3" height="3" fill="#0A0A0A"/>
+                  <rect x="21" y="21" width="3" height="3" fill="#E8F000"/>
+                  <rect x="26" y="21" width="3" height="3" fill="#0A0A0A"/>
+                  <rect x="15" y="26" width="3" height="3" fill="#0A0A0A"/>
+                  <rect x="26" y="26" width="3" height="3" fill="#0A0A0A"/>
                 </svg>
               </div>
-              <span className="text-sm font-franklin font-medium text-sophye-black">
-                {selectedRoles.length} role{selectedRoles.length !== 1 ? 's' : ''} selected
-              </span>
-              <span className="text-sm text-sophye-mid-gray">· you can change these anytime</span>
-            </>
-          ) : (
-            <span className="text-sm text-sophye-mid-gray">Select at least one role to continue</span>
-          )}
-        </motion.div>
+              <div>
+                <div class="wid" style="font-size:12px">SPH-2847-MSAN</div>
+                <div class="wsub">Scan to verify · sophye.io</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <div className="flex gap-3">
-          <Button
-            variant="outline"
-            size="md"
-            onClick={() => router.back()}
-            className="flex-none text-sm"
-          >
-            ← Back
-          </Button>
-          <Button
-            variant="primary"
-            size="md"
-            fullWidth
-            disabled={selectedRoles.length === 0}
-            onClick={handleContinue}
-            className="text-sm"
-          >
-            Continue →
-          </Button>
+      <!-- Connects grid -->
+      <div style="padding:28px 48px 36px;border-top:1.5px solid var(--b)">
+        <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:14px">Connects to your whole world</p>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px">
+          <div class="mcard" style="padding:14px">
+            <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">PROs</p>
+            <div style="font-size:11px;color:var(--ink);line-height:2">ASCAP<br>BMI<br>PRS<br>SOCAN</div>
+          </div>
+          <div class="mcard" style="padding:14px">
+            <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">DAWs</p>
+            <div style="font-size:11px;color:var(--ink);line-height:2">Pro Tools<br>FL Studio<br>Ableton<br>Logic Pro</div>
+          </div>
+          <div class="mcard" style="padding:14px">
+            <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Distributors</p>
+            <div style="font-size:11px;color:var(--ink);line-height:2">DistroKid<br>TuneCore<br>CD Baby<br>Amuse</div>
+          </div>
+          <div class="mcard" style="padding:14px">
+            <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Identity</p>
+            <div style="font-size:11px;color:var(--ink);line-height:2">ISNI auto-reg<br>IPI verify<br>SoundExchange<br>The MLC</div>
+          </div>
+          <div class="mcard" style="padding:14px">
+            <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Business</p>
+            <div style="font-size:11px;color:var(--ink);line-height:2">Label onboard<br>Publisher portals<br>DocuSign<br>Management</div>
+          </div>
+          <div class="mcard" style="padding:14px">
+            <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Platforms</p>
+            <div style="font-size:11px;color:var(--ink);line-height:2">Spotify credits<br>Apple Music<br>YouTube CMS<br>Sound Credit</div>
+          </div>
         </div>
       </div>
     </div>
-  )
-}
-```
+  </div>
+</div>
 
----
-
-## app/setup/pro/page.tsx
-
-```typescript
-'use client'
-
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ProgressBar } from '@/components/onboarding/ProgressBar'
-import { Input } from '@/components/ui/Input'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
-import { useOnboardingStore } from '@/lib/store/onboardingStore'
-import { mockIPILookup, PRO_OPTIONS } from '@/lib/data/mock'
-import { formatIPI } from '@/lib/utils'
-import type { PRO } from '@/types'
-
-export default function SetupProPage() {
-  const router = useRouter()
-  const {
-    selectedPRO, ipiInput, ipiVerified,
-    setSelectedPRO, setIPIInput, setIPIVerified,
-    setStep, generateIdentity,
-  } = useOnboardingStore()
-
-  const [looking, setLooking] = useState(false)
-  const [lookupName, setLookupName] = useState('')
-  const [lookupError, setLookupError] = useState('')
-
-  const handleIPIChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatIPI(e.target.value)
-    setIPIInput(formatted)
-    setIPIVerified(false)
-    setLookupName('')
-    setLookupError('')
-  }
-
-  const handleLookup = async () => {
-    if (!ipiInput.trim()) return
-    setLooking(true)
-    setLookupError('')
-    const result = await mockIPILookup(ipiInput)
-    setLooking(false)
-    if (result.found && result.name) {
-      setIPIVerified(true)
-      setLookupName(result.name)
-    } else {
-      setLookupError('IPI not found. Check your number in your PRO portal.')
-    }
-  }
-
-  const handleContinue = (skip = false) => {
-    if (!skip && !selectedPRO) return
-    generateIdentity()
-    setStep('confirmed')
-    router.push('/setup/confirmed')
-  }
-
-  return (
-    <div className="flex-1 flex items-start justify-center px-6 py-12">
-      <div className="w-full max-w-sm">
-        <ProgressBar currentStep={3} />
-
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <p className="text-label-upper text-sophye-mid-gray mb-3">Your rights org</p>
-          <h1
-            className="font-franklin font-black text-sophye-black mb-2"
-            style={{ fontSize: 28, letterSpacing: '-0.02em' }}
-          >
-            Your performing rights org
-          </h1>
-          <p className="text-sm text-sophye-ink mb-8">
-            This is what makes your identity verifiable. Your IPI links you to royalties worldwide.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.12 }}
-          className="space-y-6"
-        >
-          {/* PRO selector */}
-          <div>
-            <p className="text-label-upper text-sophye-mid-gray mb-3">Which PRO are you with?</p>
-            <div className="flex flex-wrap gap-2">
-              {PRO_OPTIONS.map((pro) => (
-                <button
-                  key={pro}
-                  type="button"
-                  onClick={() => setSelectedPRO(selectedPRO === pro ? undefined : pro as PRO)}
-                  className={`
-                    px-3 py-2 rounded-[4px] border-[1.5px] text-xs font-franklin font-bold tracking-wide uppercase
-                    transition-all duration-150 cursor-pointer
-                    ${selectedPRO === pro
-                      ? 'bg-sophye-black text-sophye-yellow border-sophye-black'
-                      : 'bg-sophye-white text-sophye-black border-sophye-black hover:bg-sophye-gray-bg'
-                    }
-                  `}
-                >
-                  {pro}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* IPI input */}
-          <div>
-            <p className="text-label-upper text-sophye-mid-gray mb-3">IPI / CAE number</p>
-            <div className="flex gap-2">
-              <Input
-                placeholder="00 000 000 250"
-                value={ipiInput}
-                onChange={handleIPIChange}
-                mono
-                hint="Find this in your PRO member portal under your profile"
-                className="flex-1"
-              />
-              <button
-                type="button"
-                onClick={handleLookup}
-                disabled={looking || !ipiInput.trim()}
-                className="px-4 py-3 bg-sophye-black text-sophye-white text-xs font-franklin font-bold tracking-wide uppercase rounded-[4px] hover:bg-sophye-near-black transition-colors disabled:opacity-40 flex-shrink-0 self-start"
-              >
-                {looking ? (
-                  <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin block" />
-                ) : 'Look up →'}
-              </button>
-            </div>
-
-            {/* Lookup result */}
-            <AnimatePresence>
-              {ipiVerified && lookupName && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                  animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
-                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                  className="overflow-hidden"
-                >
-                  <div className="bg-sophye-gray-bg border border-sophye-stone rounded-[6px] p-3 flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-full bg-sophye-yellow flex items-center justify-center flex-shrink-0">
-                      <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                        <path d="M1 4L3.5 6.5L9 1" stroke="#0A0A0A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-sm font-franklin font-bold text-sophye-black">
-                        {lookupName} · {selectedPRO ?? 'PRO'} confirmed
-                      </p>
-                      <p className="text-xs text-sophye-mid-gray">ISNI being registered in the background...</p>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-              {lookupError && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                  animate={{ opacity: 1, height: 'auto', marginTop: 8 }}
-                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                >
-                  <p className="text-xs text-red-500 font-medium">{lookupError}</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="mt-8 space-y-3"
-        >
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              size="md"
-              onClick={() => router.back()}
-              className="flex-none text-sm"
-            >
-              ← Back
-            </Button>
-            <Button
-              variant="primary"
-              size="md"
-              fullWidth
-              disabled={!selectedPRO}
-              onClick={() => handleContinue(false)}
-              className="text-sm"
-            >
-              Continue →
-            </Button>
-          </div>
-          <button
-            type="button"
-            onClick={() => handleContinue(true)}
-            className="w-full text-center text-xs font-franklin font-bold tracking-widest uppercase text-sophye-mid-gray hover:text-sophye-black transition-colors underline underline-offset-2"
-          >
-            Skip for now — add later
+<!-- ══════════════════════════════════════════
+     SCREEN 2 — JOIN
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-lbl">
+    /join — Account creation · 0:20
+    <span class="tag tag-b">Auth</span>
+  </div>
+  <div class="cols2">
+    <!-- Web -->
+    <div class="browser">
+      <div class="bar">
+        <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
+        <div class="url">sophye.io/join</div>
+      </div>
+      <div style="background:var(--w)">
+        <div class="ybar"></div>
+        <div class="snav">
+          <div class="wordmark" style="font-size:13px"><div class="smark" style="width:22px;height:22px;font-size:11px">S</div>Sophye</div>
+          <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">← Back</span>
+        </div>
+        <div style="padding:32px 40px;max-width:340px">
+          <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Step 1 of 6</p>
+          <h2 style="font-family:var(--ff);font-weight:900;font-size:24px;letter-spacing:-.02em;color:var(--b);margin-bottom:6px">Create your account</h2>
+          <p style="font-size:12px;color:var(--ink);margin-bottom:20px">Takes about 2 minutes. No credit card needed.</p>
+          <button class="bb" style="width:100%;margin-bottom:8px;font-size:10px;gap:8px">
+            <svg width="12" height="14" viewBox="0 0 14 17" fill="white"><path d="M13.3 8.7c0-2.8 2.3-4.2 2.4-4.3-1.3-1.9-3.4-2.2-4.1-2.2-1.7-.2-3.4 1-4.3 1-.9 0-2.2-1-3.6-1-1.9 0-3.6 1.1-4.6 2.7-2 3.4-.5 8.4 1.4 11.1.9 1.3 2 2.8 3.5 2.8 1.4-.1 2-1 3.6-1 1.7 0 2.2 1 3.6 1 1.5 0 2.5-1.4 3.4-2.7.7-1 1.2-2 1.5-2.2-.1 0-2.8-1.2-2.8-4.2z"/></svg>
+            Continue with Apple
           </button>
-        </motion.div>
-      </div>
-    </div>
-  )
-}
-```
-
----
-
-## app/setup/confirmed/page.tsx
-
-```typescript
-'use client'
-
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import { Button } from '@/components/ui/Button'
-import { useOnboardingStore } from '@/lib/store/onboardingStore'
-
-export default function SetupConfirmedPage() {
-  const router = useRouter()
-  const { legalName, selectedPRO, sophyeId, ipiInput, ipiVerified, setStep } = useOnboardingStore()
-
-  useEffect(() => {
-    if (!sophyeId) router.replace('/join')
-  }, [sophyeId, router])
-
-  const displayName = legalName || 'Your Name'
-  const displayId = sophyeId || 'SPH-XXXX-XXXX'
-
-  return (
-    <div className="flex-1 flex items-center justify-center px-6 py-12 bg-sophye-black min-h-0">
-      <div className="w-full max-w-sm text-center">
-
-        {/* Logo mark */}
-        <motion.div
-          initial={{ scale: 0.5, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-          className="flex justify-center mb-8"
-        >
-          <div
-            className="w-16 h-16 rounded-[10px] flex items-center justify-center font-franklin font-black text-3xl"
-            style={{ background: '#E8F000', color: '#0A0A0A', letterSpacing: '-0.04em' }}
-          >
-            S
-          </div>
-        </motion.div>
-
-        {/* Headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25, duration: 0.5 }}
-          className="font-franklin font-black text-white mb-3"
-          style={{ fontSize: 'clamp(30px, 5vw, 40px)', lineHeight: 1, letterSpacing: '-0.03em' }}
-        >
-          Your fingerprint<br />is live.
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="text-xs font-franklin font-bold tracking-widest uppercase mb-10"
-          style={{ color: '#555' }}
-        >
-          {ipiVerified && selectedPRO ? `Verified · ${selectedPRO} · IPI confirmed` : 'Identity created'}
-        </motion.p>
-
-        {/* Identity card */}
-        <motion.div
-          initial={{ opacity: 0, y: 24, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ delay: 0.35, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="rounded-[8px] p-5 mb-8 text-left"
-          style={{ background: '#111' }}
-        >
-          {/* Verified row */}
-          <div className="flex items-center justify-between mb-4">
-            <p
-              className="font-franklin font-black text-white"
-              style={{ fontSize: 18, letterSpacing: '-0.02em' }}
-            >
-              {displayName}
-            </p>
-            {ipiVerified && (
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full" style={{ background: '#E8F000' }} />
-                <span className="text-[9px] font-bold tracking-widest uppercase" style={{ color: '#E8F000' }}>
-                  Verified
-                </span>
-              </div>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            {selectedPRO && (
-              <div>
-                <p className="text-[8px] font-bold tracking-widest uppercase mb-1" style={{ color: '#444' }}>PRO</p>
-                <p className="text-white text-xs font-bold">{selectedPRO}</p>
-              </div>
-            )}
-            {ipiVerified && ipiInput && (
-              <div>
-                <p className="text-[8px] font-bold tracking-widest uppercase mb-1" style={{ color: '#444' }}>IPI</p>
-                <p className="text-white text-xs font-bold font-mono">{ipiInput.slice(0, 9)}</p>
-              </div>
-            )}
-            <div>
-              <p className="text-[8px] font-bold tracking-widest uppercase mb-1" style={{ color: '#444' }}>Sophye ID</p>
-              <p className="font-mono text-xs font-bold" style={{ color: '#E8F000' }}>{displayId}</p>
-            </div>
-            <div>
-              <p className="text-[8px] font-bold tracking-widest uppercase mb-1" style={{ color: '#444' }}>ISNI</p>
-              <p className="text-xs font-medium" style={{ color: '#555' }}>Registering...</p>
-            </div>
-          </div>
-
-          <div className="mt-4 pt-3 border-t" style={{ borderColor: '#1e1e1e' }}>
-            <p className="text-[9px] font-bold tracking-widest uppercase mb-1" style={{ color: '#444' }}>
-              Profile link
-            </p>
-            <p className="text-xs font-mono" style={{ color: '#888' }}>
-              sophye.io/{displayName.toLowerCase().replace(/\s+/g, '-')}
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55 }}
-          className="space-y-3"
-        >
-          <Button
-            variant="primary"
-            size="lg"
-            fullWidth
-            className="text-sm"
-            onClick={() => { setStep('wallet'); router.push('/setup/wallet') }}
-          >
-            Add to Apple Wallet →
-          </Button>
-          <button
-            onClick={() => { setStep('done'); router.push('/dashboard') }}
-            className="w-full text-center text-xs font-franklin font-bold tracking-widest uppercase transition-colors underline underline-offset-2"
-            style={{ color: '#555' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#888')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#555')}
-          >
-            Skip — go to dashboard
+          <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:#fff;color:var(--b);border:1.5px solid var(--stone);border-radius:4px;font-family:var(--ff);font-weight:700;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px;cursor:pointer">
+            <svg width="13" height="13" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Continue with Google
           </button>
-        </motion.div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+            <div style="flex:1;height:1px;background:var(--stone)"></div>
+            <span style="font-size:10px;color:var(--mg)">or use email</span>
+            <div style="flex:1;height:1px;background:var(--stone)"></div>
+          </div>
+          <label class="slabel">Email address</label>
+          <input class="sinput" type="email" placeholder="you@example.com" style="margin-bottom:10px"/>
+          <button class="by" style="width:100%;font-size:10px">Send magic link →</button>
+          <p style="font-size:10px;color:var(--mg);text-align:center;margin-top:8px">No password needed · We email you a link</p>
+        </div>
       </div>
     </div>
-  )
-}
-```
-
----
-
-## app/setup/wallet/page.tsx
-
-```typescript
-'use client'
-
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { YellowBar } from '@/components/effects/YellowBar'
-import { SophyeWordmark } from '@/components/effects/SophyeMark'
-import { Button } from '@/components/ui/Button'
-import { WalletPassPreview } from '@/components/wallet/WalletPassPreview'
-import { useOnboardingStore } from '@/lib/store/onboardingStore'
-import Link from 'next/link'
-
-function WalletIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="5" width="20" height="14" rx="2"/>
-      <path d="M16 12h2"/>
-      <path d="M2 10h20"/>
-    </svg>
-  )
-}
-
-export default function SetupWalletPage() {
-  const router = useRouter()
-  const { legalName, stageName, selectedPRO, ipiInput, selectedRoles, sophyeId, setStep } = useOnboardingStore()
-  const [adding, setAdding] = useState(false)
-  const [added, setAdded] = useState(false)
-
-  const handleAddToWallet = async () => {
-    setAdding(true)
-    // In production: POST /api/wallet/generate → download .pkpass
-    // For MVP: simulate the flow
-    await new Promise(r => setTimeout(r, 1800))
-    setAdded(true)
-    setTimeout(() => {
-      setStep('done')
-      router.push('/dashboard')
-    }, 1200)
-  }
-
-  return (
-    <div className="min-h-screen flex flex-col bg-sophye-gray-bg">
-      <YellowBar />
-      <nav className="px-6 py-4 flex items-center justify-between border-b border-sophye-stone bg-sophye-white">
-        <SophyeWordmark size="sm" />
-        <span className="text-label-upper text-sophye-mid-gray">Almost done</span>
-      </nav>
-
-      <main className="flex-1 flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-sm">
-
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="mb-6"
-          >
-            <p className="text-label-upper text-sophye-mid-gray mb-3">Step 6 of 6</p>
-            <h1
-              className="font-franklin font-black text-sophye-black mb-2"
-              style={{ fontSize: 26, letterSpacing: '-0.02em' }}
-            >
-              Add Sophye to your wallet
-            </h1>
-            <p className="text-sm text-sophye-ink">
-              Your creator ID lives in Apple Wallet alongside your credit cards. Show it anywhere — no internet needed.
-            </p>
-          </motion.div>
-
-          {/* Pass preview */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.5 }}
-            className="mb-6"
-          >
-            <WalletPassPreview
-              legalName={legalName || 'Your Name'}
-              stageName={stageName || undefined}
-              pro={selectedPRO}
-              ipi={ipiInput || undefined}
-              roles={selectedRoles.length > 0 ? selectedRoles : ['Songwriter' as const]}
-              sophyeId={sophyeId || 'SPH-XXXX-XXXX'}
-              sessionCount={0}
-              isVerified={!!selectedPRO}
-            />
-          </motion.div>
-
-          {/* What's on the card */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="sophye-card p-4 mb-6"
-          >
-            <p className="text-label-upper text-sophye-mid-gray mb-3">What&apos;s on the card</p>
-            <div className="space-y-2">
-              {[
-                ['Your name', legalName || '—'],
-                ['PRO', selectedPRO || 'Not set'],
-                ['IPI', ipiInput || 'Not set'],
-                ['Sophye ID', sophyeId || '—'],
-                ['QR code', 'Links to your verified profile'],
-              ].map(([label, value]) => (
-                <div key={label} className="flex items-center justify-between">
-                  <span className="text-xs font-franklin text-sophye-mid-gray">{label}</span>
-                  <span className="text-xs font-franklin font-bold text-sophye-black">{value}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Actions */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="space-y-3"
-          >
-            {added ? (
-              <div className="w-full py-4 bg-sophye-yellow text-sophye-black text-center rounded-[4px] text-sm font-franklin font-black tracking-wide uppercase">
-                ✓ Added to Wallet — Opening dashboard...
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={handleAddToWallet}
-                disabled={adding}
-                className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-sophye-black text-sophye-white rounded-[4px] text-sm font-franklin font-bold tracking-wide uppercase hover:bg-sophye-near-black transition-colors disabled:opacity-70"
-              >
-                {adding ? (
-                  <>
-                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Generating pass...
-                  </>
-                ) : (
-                  <>
-                    <div className="w-6 h-6 bg-sophye-yellow rounded-[4px] flex items-center justify-center flex-shrink-0">
-                      <span className="font-black text-xs text-sophye-black" style={{ letterSpacing: '-0.04em' }}>S</span>
-                    </div>
-                    Add to Apple Wallet
-                  </>
-                )}
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={() => { setStep('done'); router.push('/dashboard') }}
-              className="w-full text-center text-xs font-franklin font-bold tracking-widest uppercase text-sophye-mid-gray hover:text-sophye-black transition-colors underline underline-offset-2"
-            >
-              Skip — I&apos;ll do this later
-            </button>
-          </motion.div>
-        </div>
-      </main>
-    </div>
-  )
-}
-```
-
----
-
-## app/dashboard/page.tsx
-
-```typescript
-'use client'
-
-import { useState } from 'react'
-import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { YellowBar } from '@/components/effects/YellowBar'
-import { SophyeWordmark } from '@/components/effects/SophyeMark'
-import { Badge } from '@/components/ui/Badge'
-import { Button } from '@/components/ui/Button'
-import { AnimatedNumber } from '@/components/effects/AnimatedNumber'
-import { useOnboardingStore } from '@/lib/store/onboardingStore'
-import { MOCK_SESSIONS } from '@/lib/data/mock'
-import { timeAgo } from '@/lib/utils'
-
-const NEXT_ACTIONS = [
-  {
-    num: '01',
-    title: 'Share your profile link',
-    desc: 'Send it to a collaborator, label, or publisher.',
-    action: 'Copy link',
-    href: null,
-  },
-  {
-    num: '02',
-    title: 'Invite a collaborator to a session',
-    desc: 'Start tracking who made what.',
-    action: 'New session →',
-    href: '/sessions/new',
-  },
-  {
-    num: '03',
-    title: 'Install the DAW plugin',
-    desc: 'Pro Tools, FL Studio, Ableton, Logic — all covered.',
-    action: 'Get plugin →',
-    href: '/plugins',
-  },
-]
-
-const STATUS_COLORS: Record<string, string> = {
-  draft: 'bg-sophye-stone text-sophye-ink',
-  confirmed: 'bg-sophye-yellow text-sophye-black',
-  registered: 'bg-sophye-black text-sophye-yellow',
-}
-
-export default function DashboardPage() {
-  const { legalName, stageName, selectedPRO, ipiVerified, sophyeId, selectedRoles } = useOnboardingStore()
-  const [copied, setCopied] = useState(false)
-
-  const displayName = legalName || 'Creator'
-  const handle = displayName.toLowerCase().replace(/\s+/g, '-')
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(`sophye.io/${handle}`)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
-  return (
-    <div className="min-h-screen flex flex-col bg-sophye-white">
-      <YellowBar />
-
-      {/* Nav */}
-      <nav className="px-6 md:px-10 py-4 flex items-center justify-between border-b border-sophye-stone">
-        <SophyeWordmark size="sm" />
-        <div className="flex items-center gap-3">
-          {ipiVerified && selectedPRO && (
-            <Badge variant="dark" dot>Verified · {selectedPRO}</Badge>
-          )}
-          <Link href={`/profile/${handle}`}>
-            <div className="w-8 h-8 rounded-full bg-sophye-black flex items-center justify-center text-xs font-franklin font-black text-sophye-yellow cursor-pointer hover:bg-sophye-near-black transition-colors">
-              {displayName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)}
-            </div>
-          </Link>
-        </div>
-      </nav>
-
-      <main className="flex-1 px-6 md:px-10 py-10">
-        <div className="max-w-4xl mx-auto">
-
-          {/* Welcome */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="mb-10"
-          >
-            <p className="text-label-upper text-sophye-mid-gray mb-2">Your fingerprint</p>
-            <h1
-              className="font-franklin font-black text-sophye-black mb-1"
-              style={{ fontSize: 'clamp(26px, 4vw, 36px)', letterSpacing: '-0.02em' }}
-            >
-              {displayName}
-            </h1>
-            {sophyeId && (
-              <p className="text-sm font-mono text-sophye-mid-gray">{sophyeId}</p>
-            )}
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="grid grid-cols-3 gap-3 mb-10"
-          >
-            {[
-              { label: 'Sessions', value: 47 },
-              { label: 'Credits', value: 23 },
-              { label: 'Collaborators', value: 12 },
-            ].map(({ label, value }) => (
-              <div
-                key={label}
-                className="bg-sophye-gray-bg rounded-[6px] p-5 text-center"
-              >
-                <AnimatedNumber
-                  value={value}
-                  className="text-sophye-black mb-1 block"
-                  style={{ fontSize: 'clamp(28px, 5vw, 40px)', lineHeight: 1, letterSpacing: '-0.03em' } as React.CSSProperties}
-                />
-                <p className="text-label-upper text-sophye-mid-gray">{label}</p>
-              </div>
-            ))}
-          </motion.div>
-
-          <div className="sophye-divider mb-10" />
-
-          {/* Two-column: next actions + sessions */}
-          <div className="grid md:grid-cols-2 gap-10">
-
-            {/* Next actions */}
-            <motion.div
-              initial={{ opacity: 0, x: -12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <p className="text-label-upper text-sophye-mid-gray mb-5">Start here</p>
-              <div className="space-y-0">
-                {NEXT_ACTIONS.map((action, i) => (
-                  <div
-                    key={action.num}
-                    className="flex gap-4 py-4 border-b border-sophye-stone last:border-0"
-                  >
-                    <span
-                      className="font-franklin font-black text-sophye-stone flex-shrink-0 mt-0.5"
-                      style={{ fontSize: 11, letterSpacing: '0.05em' }}
-                    >
-                      {action.num}
-                    </span>
-                    <div className="flex-1">
-                      <p className="font-franklin font-bold text-sophye-black text-sm mb-0.5">
-                        {action.title}
-                      </p>
-                      <p className="text-xs text-sophye-mid-gray mb-2">{action.desc}</p>
-                      {action.href ? (
-                        <Link
-                          href={action.href}
-                          className="text-xs font-franklin font-bold tracking-wide uppercase text-sophye-black underline underline-offset-2 hover:text-sophye-ink"
-                        >
-                          {action.action}
-                        </Link>
-                      ) : (
-                        <button
-                          onClick={handleCopy}
-                          className="text-xs font-franklin font-bold tracking-wide uppercase text-sophye-black underline underline-offset-2 hover:text-sophye-ink"
-                        >
-                          {copied ? '✓ Copied!' : action.action}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Recent sessions */}
-            <motion.div
-              initial={{ opacity: 0, x: 12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.25 }}
-            >
-              <div className="flex items-center justify-between mb-5">
-                <p className="text-label-upper text-sophye-mid-gray">Recent sessions</p>
-                <Link
-                  href="/sessions"
-                  className="text-xs font-franklin font-bold tracking-wide uppercase text-sophye-mid-gray hover:text-sophye-black transition-colors underline underline-offset-2"
-                >
-                  View all
-                </Link>
-              </div>
-              <div className="space-y-0">
-                {MOCK_SESSIONS.map((session, i) => (
-                  <motion.div
-                    key={session.id}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + i * 0.06 }}
-                    className="py-4 border-b border-sophye-stone last:border-0 flex items-center justify-between gap-3"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p className="font-franklin font-bold text-sophye-black text-sm truncate mb-0.5">
-                        {session.title}
-                      </p>
-                      <p className="text-xs text-sophye-mid-gray">
-                        {session.participants.length} contributor{session.participants.length !== 1 ? 's' : ''} · {timeAgo(session.date)}
-                      </p>
-                    </div>
-                    <span
-                      className={`text-[9px] font-bold tracking-widest uppercase px-2 py-1 rounded-[2px] flex-shrink-0 ${STATUS_COLORS[session.status]}`}
-                    >
-                      {session.status}
-                    </span>
-                  </motion.div>
-                ))}
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="mt-5"
-              >
-                <Button variant="outline" size="sm" fullWidth className="text-xs">
-                  + Start new session
-                </Button>
-              </motion.div>
-            </motion.div>
+    <!-- iOS -->
+    <div class="phone-scene">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="pscreen" style="background:var(--w)">
+          <div class="ybar" style="margin-bottom:12px"></div>
+          <div class="wordmark" style="font-size:12px;margin-bottom:18px"><div class="smark" style="width:18px;height:18px;font-size:9px">S</div>Sophye</div>
+          <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:6px">Step 1 of 6</p>
+          <h2 style="font-family:var(--ff);font-weight:900;font-size:17px;letter-spacing:-.02em;color:var(--b);margin-bottom:4px">Create account</h2>
+          <p style="font-size:10px;color:var(--mg);margin-bottom:14px">2 minutes. Free.</p>
+          <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:var(--b);color:#fff;border:none;border-radius:4px;font-family:var(--ff);font-weight:700;font-size:9px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">
+            <svg width="9" height="11" viewBox="0 0 14 17" fill="white"><path d="M13.3 8.7c0-2.8 2.3-4.2 2.4-4.3-1.3-1.9-3.4-2.2-4.1-2.2-1.7-.2-3.4 1-4.3 1-.9 0-2.2-1-3.6-1-1.9 0-3.6 1.1-4.6 2.7-2 3.4-.5 8.4 1.4 11.1.9 1.3 2 2.8 3.5 2.8 1.4-.1 2-1 3.6-1 1.7 0 2.2 1 3.6 1 1.5 0 2.5-1.4 3.4-2.7.7-1 1.2-2 1.5-2.2-.1 0-2.8-1.2-2.8-4.2z"/></svg>
+            Sign in with Apple
+          </button>
+          <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:#fff;color:var(--b);border:1.5px solid var(--stone);border-radius:4px;font-family:var(--ff);font-weight:700;font-size:9px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px">
+            <svg width="10" height="10" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Sign in with Google
+          </button>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+            <div style="flex:1;height:1px;background:var(--stone)"></div>
+            <span style="font-size:8px;color:var(--mg)">or email</span>
+            <div style="flex:1;height:1px;background:var(--stone)"></div>
           </div>
-
-          {/* Profile link banner */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.45 }}
-            className="mt-10 sophye-card-dark p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-          >
-            <div>
-              <p className="text-label-upper mb-1" style={{ color: '#555' }}>Your public profile</p>
-              <p className="font-mono text-sm font-bold text-white">sophye.io/{handle}</p>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={handleCopy}
-                className="px-4 py-2.5 bg-sophye-yellow text-sophye-black text-xs font-franklin font-bold tracking-wide uppercase rounded-[4px] hover:bg-[#d4db00] transition-colors"
-              >
-                {copied ? '✓ Copied' : 'Copy link'}
-              </button>
-              <Link href={`/profile/${handle}`}>
-                <button className="px-4 py-2.5 bg-transparent text-white border border-white/20 text-xs font-franklin font-bold tracking-wide uppercase rounded-[4px] hover:border-white/40 transition-colors">
-                  View profile →
-                </button>
-              </Link>
-            </div>
-          </motion.div>
-
+          <input class="sinput" placeholder="Email address" style="font-size:10px;padding:8px;margin-bottom:7px"/>
+          <button class="by" style="width:100%;font-size:9px;padding:9px">Magic link →</button>
         </div>
-      </main>
+      </div>
     </div>
-  )
-}
-```
+  </div>
+</div>
 
----
-
-## app/profile/[handle]/page.tsx
-
-```typescript
-import Link from 'next/link'
-import { YellowBar } from '@/components/effects/YellowBar'
-import { SophyeWordmark } from '@/components/effects/SophyeMark'
-import { Badge } from '@/components/ui/Badge'
-import { Button } from '@/components/ui/Button'
-import { WalletPassPreview } from '@/components/wallet/WalletPassPreview'
-import { MOCK_CREATOR, MOCK_SESSIONS } from '@/lib/data/mock'
-
-export default function ProfilePage({ params }: { params: { handle: string } }) {
-  // In production: fetch creator by handle from DB
-  const creator = MOCK_CREATOR
-  const sessions = MOCK_SESSIONS.filter(s => s.status !== 'draft')
-
-  return (
-    <div className="min-h-screen flex flex-col bg-sophye-white">
-      <YellowBar />
-
-      {/* Nav */}
-      <nav className="px-6 md:px-10 py-4 flex items-center justify-between border-b border-sophye-stone">
-        <Link href="/"><SophyeWordmark size="sm" /></Link>
-        <div className="flex items-center gap-3">
-          <span className="text-label-upper text-sophye-mid-gray">Public profile</span>
-          <Link href="/join">
-            <Button variant="primary" size="sm">Create yours →</Button>
-          </Link>
+<!-- ══════════════════════════════════════════
+     SCREENS 3+4 — NAME + ROLES
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-lbl">
+    /setup/name + /setup/roles · 0:45 – 1:25
+    <span class="tag tag-b">Onboarding</span>
+  </div>
+  <div class="cols2">
+    <!-- Name -->
+    <div class="browser">
+      <div class="bar">
+        <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
+        <div class="url">sophye.io/setup/name</div>
+      </div>
+      <div style="background:var(--w);padding:32px 36px">
+        <div class="prog">
+          <div class="prog-meta"><span class="prog-lbl">Step 2 of 6</span><span class="prog-lbl">Name</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:33%"></div></div>
         </div>
-      </nav>
+        <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Your identity</p>
+        <h2 style="font-family:var(--ff);font-weight:900;font-size:24px;letter-spacing:-.02em;color:var(--b);margin-bottom:6px">What's your name?</h2>
+        <p style="font-size:12px;color:var(--ink);margin-bottom:20px">Your legal name is used for royalties. Your stage name is what collaborators see.</p>
+        <label class="slabel">Legal name</label>
+        <input class="sinput active" value="Maria Santos" style="margin-bottom:4px"/>
+        <p class="shint" style="margin-bottom:16px">Used for PRO registration and split sheets</p>
+        <label class="slabel">Stage name (optional)</label>
+        <input class="sinput" placeholder="MARA" style="margin-bottom:4px"/>
+        <p class="shint" style="margin-bottom:22px">What collaborators and studios will see</p>
+        <div style="display:flex;gap:10px">
+          <button class="bo" style="font-size:10px;padding:9px 14px">← Back</button>
+          <button class="by" style="flex:1;font-size:10px">Continue →</button>
+        </div>
+      </div>
+    </div>
+    <!-- Roles -->
+    <div class="browser">
+      <div class="bar">
+        <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
+        <div class="url">sophye.io/setup/roles</div>
+      </div>
+      <div style="background:var(--w);padding:32px 36px">
+        <div class="prog">
+          <div class="prog-meta"><span class="prog-lbl">Step 3 of 6</span><span class="prog-lbl">Roles</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:50%"></div></div>
+        </div>
+        <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Your roles</p>
+        <h2 style="font-family:var(--ff);font-weight:900;font-size:24px;letter-spacing:-.02em;color:var(--b);margin-bottom:6px">What do you create?</h2>
+        <p style="font-size:12px;color:var(--ink);margin-bottom:14px">Select all that apply. These become your default roles on every session.</p>
+        <div style="margin-bottom:14px">
+          <span class="ron">Songwriter</span><span class="ron">Producer</span>
+          <span class="roff">Topliner</span><span class="roff">Beatmaker</span>
+          <span class="ron">Lead Vocalist</span><span class="roff">Featured Artist</span>
+          <span class="roff">Session Musician</span><span class="roff">Mix Engineer</span>
+          <span class="roff">Mastering</span><span class="roff">Composer</span>
+          <span class="roff">Lyricist</span><span class="roff">Arranger</span><span class="roff">A&R</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--stone);margin-bottom:14px">
+          <div style="width:16px;height:16px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3.5 5.5L7 1" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span style="font-size:12px;font-weight:600;color:var(--b)">3 roles selected · you can change these anytime</span>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="bo" style="font-size:10px;padding:9px 14px">← Back</button>
+          <button class="by" style="flex:1;font-size:10px">Continue →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-      <main className="flex-1 px-6 md:px-10 py-12">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-[1fr_auto] gap-10 md:gap-16 items-start">
-
-            {/* Left: identity */}
-            <div>
-              {/* Header */}
-              <div className="mb-8">
-                <div className="flex items-start gap-4 mb-5">
-                  <div
-                    className="w-14 h-14 rounded-full bg-sophye-black flex items-center justify-center font-franklin font-black text-xl text-sophye-yellow flex-shrink-0"
-                    style={{ letterSpacing: '-0.02em' }}
-                  >
-                    {creator.legalName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)}
-                  </div>
-                  <div>
-                    <h1
-                      className="font-franklin font-black text-sophye-black leading-none mb-1"
-                      style={{ fontSize: 'clamp(22px, 3vw, 30px)', letterSpacing: '-0.02em' }}
-                    >
-                      {creator.legalName}
-                    </h1>
-                    {creator.stageName && (
-                      <p className="text-sm text-sophye-mid-gray mb-1.5">Also known as {creator.stageName}</p>
-                    )}
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Badge variant="yellow" dot>Verified · {creator.pro}</Badge>
-                      {creator.publisherName && (
-                        <Badge variant="outline">{creator.publisherName}</Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Roles */}
-                <div className="flex flex-wrap gap-1.5 mb-5">
-                  {creator.roles.map(role => (
-                    <span
-                      key={role}
-                      className="px-2.5 py-1.5 bg-sophye-gray-bg border border-sophye-stone text-xs font-franklin font-bold rounded-[4px] text-sophye-ink"
-                    >
-                      {role}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Identity fields */}
-              <div className="sophye-card mb-8">
-                <div className="p-4 border-b border-sophye-stone">
-                  <p className="text-label-upper text-sophye-mid-gray">Verified identity</p>
-                </div>
-                <div className="divide-y divide-sophye-stone">
-                  {[
-                    { label: 'PRO', value: creator.pro ?? '—', mono: false },
-                    { label: 'IPI number', value: creator.ipi ?? '—', mono: true },
-                    { label: 'ISNI', value: creator.isni ?? '—', mono: true },
-                    { label: 'Sophye ID', value: creator.sophyeId, mono: true },
-                  ].map(({ label, value, mono }) => (
-                    <div key={label} className="flex items-center justify-between px-4 py-3">
-                      <span className="text-xs text-sophye-mid-gray font-franklin">{label}</span>
-                      <span className={`text-sm font-bold text-sophye-black ${mono ? 'font-mono text-xs' : 'font-franklin'}`}>
-                        {value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Stats */}
-              <div className="grid grid-cols-3 gap-3 mb-8">
-                {[
-                  { label: 'Sessions', value: 47 },
-                  { label: 'Releases', value: 23 },
-                  { label: 'Collaborators', value: 12 },
-                ].map(({ label, value }) => (
-                  <div key={label} className="bg-sophye-gray-bg rounded-[6px] p-4 text-center">
-                    <p
-                      className="font-franklin font-black text-sophye-black leading-none mb-1"
-                      style={{ fontSize: 28, letterSpacing: '-0.03em' }}
-                    >
-                      {value}
-                    </p>
-                    <p className="text-label-upper text-sophye-mid-gray">{label}</p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Recent confirmed sessions */}
-              <div>
-                <p className="text-label-upper text-sophye-mid-gray mb-4">Confirmed sessions</p>
-                <div className="space-y-0 sophye-card overflow-hidden">
-                  {sessions.map((session, i) => (
-                    <div
-                      key={session.id}
-                      className="flex items-center justify-between px-4 py-3.5 border-b border-sophye-stone last:border-0 hover:bg-sophye-gray-bg transition-colors"
-                    >
-                      <div>
-                        <p className="text-sm font-franklin font-bold text-sophye-black">{session.title}</p>
-                        <p className="text-xs text-sophye-mid-gray">
-                          {session.participants.map(p => p.legalName).join(', ')}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {session.isrcLinked && (
-                          <span className="text-[9px] font-mono text-sophye-mid-gray hidden sm:block">
-                            {session.isrcLinked}
-                          </span>
-                        )}
-                        <span
-                          className={`text-[9px] font-bold tracking-widest uppercase px-2 py-1 rounded-[2px] ${
-                            session.status === 'registered'
-                              ? 'bg-sophye-black text-sophye-yellow'
-                              : 'bg-sophye-yellow text-sophye-black'
-                          }`}
-                        >
-                          {session.status}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Right: wallet pass */}
-            <div className="hidden md:block">
-              <div className="sticky top-8">
-                <p className="text-label-upper text-sophye-mid-gray mb-4">Creator ID</p>
-                <WalletPassPreview
-                  legalName={creator.legalName}
-                  stageName={creator.stageName}
-                  pro={creator.pro}
-                  ipi={creator.ipi}
-                  roles={creator.roles}
-                  sophyeId={creator.sophyeId}
-                  sessionCount={47}
-                  isVerified
-                />
-                <div className="mt-4 space-y-2">
-                  <button className="w-full py-3 bg-sophye-black text-sophye-white text-xs font-franklin font-bold tracking-wide uppercase rounded-[4px] flex items-center justify-center gap-2 hover:bg-sophye-near-black transition-colors">
-                    <div className="w-5 h-5 bg-sophye-yellow rounded-[3px] flex items-center justify-center font-black text-xs text-sophye-black">S</div>
-                    Verify this identity
-                  </button>
-                  <Link href="/join" className="block">
-                    <button className="w-full py-3 bg-sophye-yellow text-sophye-black text-xs font-franklin font-bold tracking-wide uppercase rounded-[4px] hover:bg-[#d4db00] transition-colors">
-                      Create your own fingerprint →
-                    </button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-
+<!-- ══════════════════════════════════════════
+     SCREEN 5 — PRO + IPI
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-lbl">
+    /setup/pro — PRO + IPI verification · 1:25 – 1:55
+    <span class="tag tag-b">Onboarding</span>
+  </div>
+  <div class="browser">
+    <div class="bar">
+      <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
+      <div class="url">sophye.io/setup/pro</div>
+    </div>
+    <div style="background:var(--w);padding:36px 48px">
+      <div style="max-width:420px">
+        <div class="prog">
+          <div class="prog-meta"><span class="prog-lbl">Step 4 of 6</span><span class="prog-lbl">PRO</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:66%"></div></div>
+        </div>
+        <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Your rights org</p>
+        <h2 style="font-family:var(--ff);font-weight:900;font-size:24px;letter-spacing:-.02em;color:var(--b);margin-bottom:6px">Your performing rights org</h2>
+        <p style="font-size:12px;color:var(--ink);margin-bottom:20px">This is what makes your identity verifiable. Your IPI links you to royalties worldwide.</p>
+        <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Which PRO are you with?</p>
+        <div style="margin-bottom:18px">
+          <span class="ron">ASCAP</span><span class="roff">BMI</span><span class="roff">SESAC</span>
+          <span class="roff">PRS</span><span class="roff">SOCAN</span><span class="roff">GEMA</span>
+          <span class="roff">APRA</span><span class="roff">Other</span>
+        </div>
+        <label class="slabel">IPI / CAE number</label>
+        <div style="display:flex;gap:8px;margin-bottom:4px">
+          <input class="sinput active mono" value="00 000 000 250" style="flex:1"/>
+          <button class="bb" style="font-size:10px;padding:10px 14px;flex-shrink:0">Look up →</button>
+        </div>
+        <p class="shint" style="margin-bottom:14px">Find this in your ASCAP member portal under your profile</p>
+        <!-- Verified result -->
+        <div style="background:var(--bg);border:1px solid var(--stone);border-radius:6px;padding:12px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
+          <div style="width:20px;height:20px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <p style="font-size:12px;font-weight:700;color:var(--b)">Maria Santos · ASCAP confirmed</p>
+            <p style="font-size:10px;color:var(--mg)">IPI 00 000 000 250 · ISNI registering in the background...</p>
           </div>
         </div>
-      </main>
+        <div style="display:flex;gap:10px;margin-bottom:10px">
+          <button class="bo" style="font-size:10px;padding:9px 14px">← Back</button>
+          <button class="by" style="flex:1;font-size:10px">Continue →</button>
+        </div>
+        <p style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);text-align:center;text-decoration:underline;cursor:pointer">Skip for now — add later</p>
+      </div>
     </div>
-  )
-}
+  </div>
+</div>
 
-// Required for static export (mobile build): pre-generates known profile pages.
-// In production with a database, this would fetch all creator handles.
-export async function generateStaticParams() {
-  return [
-    { handle: 'maria-santos' },
-    { handle: 'demo' },
-  ]
-}
-```
+<!-- ══════════════════════════════════════════
+     SCREEN 6 — CONFIRMED
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-lbl">
+    /setup/confirmed — The wow moment · 1:55 – 2:20
+    <span class="tag tag-y">Identity live</span>
+  </div>
+  <div class="browser">
+    <div class="bar">
+      <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
+      <div class="url">sophye.io/setup/confirmed</div>
+    </div>
+    <div style="background:var(--b);padding:60px 48px;display:flex;flex-direction:column;align-items:center;text-align:center">
+      <div style="width:60px;height:60px;background:var(--y);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--ff);font-weight:900;font-size:28px;color:var(--b);letter-spacing:-.04em;margin-bottom:24px">S</div>
+      <h1 style="font-family:var(--ff);font-weight:900;font-size:44px;line-height:.95;letter-spacing:-.03em;color:#fff;margin-bottom:10px">Your fingerprint<br>is live.</h1>
+      <p style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#555;margin-bottom:36px">Verified · ASCAP · IPI confirmed</p>
+      <div style="background:#111;border-radius:8px;padding:20px;width:100%;max-width:340px;text-align:left;margin-bottom:28px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <p style="font-family:var(--ff);font-weight:900;font-size:18px;color:#fff;letter-spacing:-.01em">Maria Santos</p>
+          <div style="display:flex;align-items:center;gap:5px">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--y)"></div>
+            <span style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--y)">Verified</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:14px;border-top:1px solid #1e1e1e">
+          <div><p style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444;margin-bottom:3px">PRO</p><p style="font-size:12px;font-weight:700;color:#fff">ASCAP</p></div>
+          <div><p style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444;margin-bottom:3px">IPI</p><p class="mono" style="font-size:11px;color:#fff">00 000 250</p></div>
+          <div><p style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444;margin-bottom:3px">Sophye ID</p><p class="mono" style="font-size:11px;color:var(--y)">SPH-2847-MSAN</p></div>
+          <div><p style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444;margin-bottom:3px">ISNI</p><p style="font-size:11px;color:#555">Registering...</p></div>
+        </div>
+        <div style="padding-top:14px;border-top:1px solid #1e1e1e;margin-top:14px">
+          <p style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444;margin-bottom:3px">Profile link</p>
+          <p class="mono" style="font-size:11px;color:#888">sophye.io/maria-santos</p>
+        </div>
+      </div>
+      <button class="by" style="width:100%;max-width:340px;padding:14px;font-size:11px;margin-bottom:12px">Add to Apple Wallet →</button>
+      <p style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#555;text-decoration:underline;cursor:pointer">Skip — go to dashboard</p>
+    </div>
+  </div>
+</div>
 
----
+<!-- ══════════════════════════════════════════
+     SCREEN 7 — WALLET
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-lbl">
+    /setup/wallet — Add to Apple Wallet · 2:20 – 2:45
+    <span class="tag tag-b">Final step</span>
+  </div>
+  <div class="cols2">
+    <!-- Web -->
+    <div class="browser">
+      <div class="bar">
+        <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
+        <div class="url">sophye.io/setup/wallet</div>
+      </div>
+      <div style="background:var(--bg)">
+        <div class="ybar"></div>
+        <div class="snav" style="background:var(--w)">
+          <div class="wordmark" style="font-size:13px"><div class="smark" style="width:22px;height:22px;font-size:11px">S</div>Sophye</div>
+          <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Almost done</span>
+        </div>
+        <div style="padding:24px 32px">
+          <div class="prog">
+            <div class="prog-meta"><span class="prog-lbl">Step 6 of 6</span><span class="prog-lbl">Wallet</span></div>
+            <div class="prog-track"><div class="prog-fill" style="width:90%"></div></div>
+          </div>
+          <h2 style="font-family:var(--ff);font-weight:900;font-size:20px;letter-spacing:-.02em;color:var(--b);margin-bottom:6px">Add Sophye to your wallet</h2>
+          <p style="font-size:11px;color:var(--ink);margin-bottom:20px">Your creator ID lives in Apple Wallet — always in your pocket, no internet needed.</p>
+          <div style="max-width:260px;margin:0 auto 18px">
+            <div class="wcard">
+              <div class="wbar"></div>
+              <div class="whdr"><div class="wbrand"><div class="ws" style="width:18px;height:18px;font-size:9px">S</div><span style="font-size:11px;font-weight:900;color:#fff">Sophye</span></div><span class="wtype">Creator ID</span></div>
+              <div class="wname-blk"><div class="wname" style="font-size:16px">Maria Santos</div><div class="wver"><div class="wvdot"></div><span class="wvtxt">Verified · ASCAP</span></div></div>
+              <div class="wfields">
+                <div><div class="wfl">Roles</div><div class="wfv" style="font-size:9px">Songwriter</div></div>
+                <div><div class="wfl">IPI</div><div class="wfv mono" style="font-size:8px">00 000 250</div></div>
+                <div><div class="wfl">Sessions</div><div class="wfv-big" style="font-size:18px">0</div></div>
+              </div>
+            </div>
+          </div>
+          <button class="bb" style="width:100%;gap:10px;padding:13px;font-size:11px;margin-bottom:8px">
+            <div style="width:20px;height:20px;background:var(--y);border-radius:3px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;color:var(--b)">S</div>
+            Add to Apple Wallet
+          </button>
+          <p style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);text-align:center;text-decoration:underline;cursor:pointer">Skip — I'll do this later</p>
+        </div>
+      </div>
+    </div>
+    <!-- iOS system sheet -->
+    <div class="phone-scene">
+      <div>
+        <div class="phone">
+          <div class="notch"></div>
+          <div style="background:#f0f0f0">
+            <div style="background:#fff;border-radius:16px 16px 0 0;padding:16px;margin-top:40px">
+              <div style="width:36px;height:4px;background:var(--stone);border-radius:2px;margin:0 auto 14px"></div>
+              <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);text-align:center;margin-bottom:12px">Add to Wallet</p>
+              <div style="max-width:170px;margin:0 auto 14px">
+                <div class="wcard">
+                  <div class="wbar"></div>
+                  <div class="whdr" style="padding:8px 10px"><div class="wbrand"><div class="ws" style="width:14px;height:14px;font-size:7px">S</div><span style="font-size:9px;font-weight:900;color:#fff">Sophye</span></div></div>
+                  <div style="padding:8px 10px 10px">
+                    <div style="font-weight:900;font-size:13px;color:#fff;letter-spacing:-.01em;margin-bottom:3px">Maria Santos</div>
+                    <div style="display:flex;align-items:center;gap:3px"><div style="width:4px;height:4px;border-radius:50%;background:var(--y)"></div><span style="font-size:7px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--y)">Verified</span></div>
+                  </div>
+                </div>
+              </div>
+              <button style="width:100%;padding:11px;background:var(--y);color:var(--b);border:none;border-radius:8px;font-family:var(--ff);font-weight:900;font-size:11px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px">Add</button>
+              <button style="width:100%;padding:11px;background:var(--bg);color:var(--mg);border:none;border-radius:8px;font-family:var(--ff);font-weight:700;font-size:10px;letter-spacing:.04em;text-transform:uppercase">Cancel</button>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:9px;color:#555;text-align:center;margin-top:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">iOS native system sheet</p>
+      </div>
+    </div>
+  </div>
+</div>
 
-## app/api/wallet/generate/route.ts
+<!-- ══════════════════════════════════════════
+     SCREEN 8 — DASHBOARD
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-lbl">
+    /dashboard — Creator home · Done in &lt;2:45
+    <span class="tag tag-w">Dashboard</span>
+  </div>
+  <div class="browser">
+    <div class="bar">
+      <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
+      <div class="url">sophye.io/dashboard</div>
+    </div>
+    <div style="background:var(--w)">
+      <div class="ybar"></div>
+      <div class="snav">
+        <div class="wordmark" style="font-size:14px"><div class="smark" style="width:26px;height:26px;font-size:13px">S</div>Sophye</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="bdg bdg-b"><div class="dot5" style="background:var(--y)"></div>Verified · ASCAP</div>
+          <div style="width:30px;height:30px;border-radius:50%;background:var(--b);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;color:var(--y)">MS</div>
+        </div>
+      </div>
+      <div style="padding:32px 40px">
+        <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:6px">Your fingerprint</p>
+        <h1 style="font-family:var(--ff);font-weight:900;font-size:34px;letter-spacing:-.03em;color:var(--b);margin-bottom:4px">Maria Santos</h1>
+        <p class="mono" style="font-size:12px;color:var(--mg);margin-bottom:24px">SPH-2847-MSAN</p>
+        <div class="cols3" style="margin-bottom:28px">
+          <div class="stat-box"><p style="font-family:var(--ff);font-weight:900;font-size:38px;letter-spacing:-.03em;color:var(--b);line-height:1;margin-bottom:4px">47</p><p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Sessions</p></div>
+          <div class="stat-box"><p style="font-family:var(--ff);font-weight:900;font-size:38px;letter-spacing:-.03em;color:var(--b);line-height:1;margin-bottom:4px">23</p><p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Credits</p></div>
+          <div class="stat-box"><p style="font-family:var(--ff);font-weight:900;font-size:38px;letter-spacing:-.03em;color:var(--b);line-height:1;margin-bottom:4px">12</p><p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Collaborators</p></div>
+        </div>
+        <div class="div-b"></div>
+        <div class="cols2" style="margin-top:24px;gap:40px">
+          <!-- Next actions -->
+          <div>
+            <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:16px">Start here</p>
+            <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--stone)">
+              <span style="font-weight:900;font-size:10px;color:var(--stone);flex-shrink:0;margin-top:2px;letter-spacing:.05em">01</span>
+              <div><p style="font-size:12px;font-weight:700;color:var(--b);margin-bottom:2px">Share your profile link</p><p style="font-size:11px;color:var(--mg);margin-bottom:5px">Send it to a collaborator, label, or publisher.</p><span style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:underline;color:var(--b)">Copy link</span></div>
+            </div>
+            <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--stone)">
+              <span style="font-weight:900;font-size:10px;color:var(--stone);flex-shrink:0;margin-top:2px;letter-spacing:.05em">02</span>
+              <div><p style="font-size:12px;font-weight:700;color:var(--b);margin-bottom:2px">Invite a collaborator</p><p style="font-size:11px;color:var(--mg);margin-bottom:5px">Start tracking who made what.</p><span style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:underline;color:var(--b)">New session →</span></div>
+            </div>
+            <div style="display:flex;gap:12px;padding:12px 0">
+              <span style="font-weight:900;font-size:10px;color:var(--stone);flex-shrink:0;margin-top:2px;letter-spacing:.05em">03</span>
+              <div><p style="font-size:12px;font-weight:700;color:var(--b);margin-bottom:2px">Install the DAW plugin</p><p style="font-size:11px;color:var(--mg);margin-bottom:5px">Pro Tools, FL Studio, Ableton, Logic.</p><span style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:underline;color:var(--b)">Get plugin →</span></div>
+            </div>
+          </div>
+          <!-- Sessions -->
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+              <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg)">Recent sessions</p>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:underline;color:var(--mg)">View all</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--stone)">
+              <div><p style="font-size:12px;font-weight:700;color:var(--b)">Golden Hour</p><p style="font-size:10px;color:var(--mg)">2 contributors · Yesterday</p></div>
+              <span class="st-conf">confirmed</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--stone)">
+              <div><p style="font-size:12px;font-weight:700;color:var(--b)">Midnight Run</p><p style="font-size:10px;color:var(--mg)">2 contributors · 4 days ago</p></div>
+              <span class="st-reg">registered</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
+              <div><p style="font-size:12px;font-weight:700;color:var(--b)">Unnamed track</p><p style="font-size:10px;color:var(--mg)">1 contributor · Today</p></div>
+              <span class="st-draft">draft</span>
+            </div>
+            <button class="bo" style="width:100%;margin-top:10px;font-size:10px">+ Start new session</button>
+          </div>
+        </div>
+        <!-- Profile link banner -->
+        <div class="mcard-dark" style="margin-top:24px;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+          <div>
+            <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#555;margin-bottom:4px">Your public profile</p>
+            <p class="mono" style="font-size:13px;color:#fff">sophye.io/maria-santos</p>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="by" style="font-size:10px;padding:8px 14px">Copy link</button>
+            <button style="padding:8px 14px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:4px;font-family:var(--ff);font-weight:700;font-size:10px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer">View profile →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-```typescript
-import { NextRequest, NextResponse } from 'next/server'
+<!-- ══════════════════════════════════════════
+     SCREEN 9 — PUBLIC PROFILE
+══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-lbl">
+    /profile/maria-santos — Public creator profile
+    <span class="tag tag-y">Public</span>
+  </div>
+  <div class="browser">
+    <div class="bar">
+      <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
+      <div class="url">sophye.io/profile/maria-santos</div>
+    </div>
+    <div style="background:var(--w)">
+      <div class="ybar"></div>
+      <div class="snav">
+        <div class="wordmark" style="font-size:14px"><div class="smark" style="width:26px;height:26px;font-size:13px">S</div>Sophye</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Public profile</span>
+          <button class="by" style="font-size:10px;padding:8px 12px">Create yours →</button>
+        </div>
+      </div>
+      <div style="padding:32px 40px;display:grid;grid-template-columns:1fr 270px;gap:40px">
+        <!-- Left -->
+        <div>
+          <div style="display:flex;gap:14px;margin-bottom:20px;align-items:flex-start">
+            <div style="width:52px;height:52px;border-radius:50%;background:var(--b);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:var(--y);flex-shrink:0">MS</div>
+            <div>
+              <h1 style="font-family:var(--ff);font-weight:900;font-size:26px;letter-spacing:-.02em;color:var(--b);line-height:1;margin-bottom:4px">Maria Santos</h1>
+              <p style="font-size:11px;color:var(--mg);margin-bottom:6px">Also known as MARA</p>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <div class="bdg bdg-y"><div class="dot5" style="background:var(--b)"></div>Verified · ASCAP</div>
+                <div class="bdg bdg-o">Santos Music Publishing</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:20px">
+            <span style="background:var(--bg);border:1px solid var(--stone);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 9px;border-radius:4px;color:var(--ink)">Songwriter</span>
+            <span style="background:var(--bg);border:1px solid var(--stone);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 9px;border-radius:4px;color:var(--ink)">Producer</span>
+            <span style="background:var(--bg);border:1px solid var(--stone);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 9px;border-radius:4px;color:var(--ink)">Lead Vocalist</span>
+          </div>
+          <!-- Identity card -->
+          <div class="mcard" style="margin-bottom:20px">
+            <div style="padding:12px 16px;border-bottom:1px solid var(--stone)"><p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg)">Verified identity</p></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--stone)"><span style="font-size:11px;color:var(--mg)">PRO</span><span style="font-size:12px;font-weight:700;color:var(--b)">ASCAP</span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--stone)"><span style="font-size:11px;color:var(--mg)">IPI number</span><span class="mono" style="font-size:11px;font-weight:700;color:var(--b)">00 000 000 250</span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--stone)"><span style="font-size:11px;color:var(--mg)">ISNI</span><span class="mono" style="font-size:11px;font-weight:700;color:var(--b)">0000 0001 2345</span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 16px"><span style="font-size:11px;color:var(--mg)">Sophye ID</span><span class="mono" style="font-size:11px;font-weight:700;color:var(--b)">SPH-2847-MSAN</span></div>
+          </div>
+          <!-- Stats -->
+          <div class="cols3" style="margin-bottom:20px">
+            <div class="stat-box"><p style="font-weight:900;font-size:28px;letter-spacing:-.03em;color:var(--b);line-height:1;margin-bottom:3px">47</p><p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Sessions</p></div>
+            <div class="stat-box"><p style="font-weight:900;font-size:28px;letter-spacing:-.03em;color:var(--b);line-height:1;margin-bottom:3px">23</p><p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Releases</p></div>
+            <div class="stat-box"><p style="font-weight:900;font-size:28px;letter-spacing:-.03em;color:var(--b);line-height:1;margin-bottom:3px">12</p><p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Collabs</p></div>
+          </div>
+          <!-- Sessions -->
+          <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:12px">Confirmed sessions</p>
+          <div class="mcard" style="overflow:hidden">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--stone)">
+              <div><p style="font-size:12px;font-weight:700;color:var(--b)">Golden Hour</p><p style="font-size:10px;color:var(--mg)">Maria Santos, Jordan Blake</p></div>
+              <div style="display:flex;align-items:center;gap:8px"><span class="mono" style="font-size:9px;color:var(--mg)">USRC12345001</span><span class="st-conf">confirmed</span></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+              <div><p style="font-size:12px;font-weight:700;color:var(--b)">Midnight Run</p><p style="font-size:10px;color:var(--mg)">Maria Santos, Sam Rivera</p></div>
+              <div style="display:flex;align-items:center;gap:8px"><span class="mono" style="font-size:9px;color:var(--mg)">USRC12345002</span><span class="st-reg">registered</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- Right: wallet card sticky -->
+        <div>
+          <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:12px">Creator ID</p>
+          <div class="wcard" style="margin-bottom:10px">
+            <div class="wbar"></div>
+            <div class="whdr"><div class="wbrand"><div class="ws" style="width:18px;height:18px;font-size:9px">S</div><span style="font-size:11px;font-weight:900;color:#fff">Sophye</span></div><span class="wtype">Creator ID</span></div>
+            <div class="wname-blk"><div class="wname" style="font-size:18px">Maria Santos</div><div class="wver"><div class="wvdot"></div><span class="wvtxt">Verified · ASCAP</span></div></div>
+            <div class="wfields">
+              <div><div class="wfl">Roles</div><div class="wfv" style="font-size:10px">Songwriter</div><div style="font-size:9px;color:#666;font-weight:500;margin-top:2px">Producer</div></div>
+              <div><div class="wfl">IPI</div><div class="wfv mono" style="font-size:9px">00 000 250</div></div>
+              <div><div class="wfl">Sessions</div><div class="wfv-big" style="font-size:24px">47</div></div>
+            </div>
+            <div class="wqr">
+              <div class="wqr-box" style="width:40px;height:40px">
+                <svg viewBox="0 0 36 36" style="width:100%;height:100%"><rect x="1" y="1" width="12" height="12" rx="2" fill="#0A0A0A"/><rect x="3" y="3" width="8" height="8" rx="1" fill="#fff"/><rect x="4" y="4" width="6" height="6" fill="#0A0A0A"/><rect x="21" y="1" width="12" height="12" rx="2" fill="#0A0A0A"/><rect x="23" y="3" width="8" height="8" rx="1" fill="#fff"/><rect x="24" y="4" width="6" height="6" fill="#0A0A0A"/><rect x="1" y="21" width="12" height="12" rx="2" fill="#0A0A0A"/><rect x="3" y="23" width="8" height="8" rx="1" fill="#fff"/><rect x="4" y="24" width="6" height="6" fill="#0A0A0A"/><rect x="15" y="15" width="4" height="4" fill="#E8F000"/></svg>
+              </div>
+              <div><div class="wid" style="font-size:11px">SPH-2847-MSAN</div><div class="wsub">Scan to verify · sophye.io</div></div>
+            </div>
+          </div>
+          <button class="bb" style="width:100%;gap:8px;padding:11px;font-size:10px;margin-bottom:6px">
+            <div style="width:16px;height:16px;background:var(--y);border-radius:3px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:8px;color:var(--b)">S</div>
+            Verify this identity
+          </button>
+          <button class="by" style="width:100%;padding:11px;font-size:10px">Create your fingerprint →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-// ── ARCHITECTURE NOTE ────────────────────────────────────────────────────
-// This route exists on the WEB build (Vercel) only.
-// The iOS Capacitor build (IS_NATIVE=true) uses static export — API routes
-// are not compiled. The iOS app calls this endpoint at runtime via
-// NEXT_PUBLIC_API_URL (the deployed Vercel domain), not a local route.
-// ─────────────────────────────────────────────────────────────────────────
-
-interface WalletRequestBody {
-  sophyeId: string
-  legalName: string
-  stageName?: string
-  pro?: string
-  ipi?: string
-  roles: string[]
-  sessionCount?: number
-  isVerified?: boolean
-}
-
-export async function POST(req: NextRequest) {
-  try {
-    const body: WalletRequestBody = await req.json()
-    const { sophyeId, legalName, pro, ipi, roles, sessionCount = 0 } = body
-
-    const passData = {
-      passTypeIdentifier: process.env.WALLET_PASS_TYPE_ID ?? 'pass.io.sophye.creator',
-      serialNumber: sophyeId,
-      teamIdentifier: process.env.WALLET_TEAM_ID ?? 'REPLACE_WITH_TEAM_ID',
-      webServiceURL: `${process.env.NEXT_PUBLIC_API_URL ?? 'https://sophye.io'}/api/wallet`,
-      authenticationToken: Buffer.from(`${sophyeId}:${Date.now()}`).toString('base64'),
-      formatVersion: 1,
-      description: 'Sophye Creator ID',
-      organizationName: 'Sophye',
-      logoText: 'Sophye',
-      generic: {
-        primaryFields: [{ key: 'name', label: 'Creator', value: legalName }],
-        secondaryFields: [
-          { key: 'pro', label: 'PRO', value: pro ?? '—' },
-          { key: 'roles', label: 'Roles', value: roles.slice(0, 2).join(', ') },
-          { key: 'sessions', label: 'Sessions', value: String(sessionCount) },
-        ],
-        auxiliaryFields: [
-          { key: 'ipi', label: 'IPI', value: ipi ?? '—' },
-          { key: 'sophyeId', label: 'Sophye ID', value: sophyeId },
-        ],
-        backFields: [
-          {
-            key: 'verify',
-            label: 'Verify identity',
-            value: `https://sophye.io/verify/${sophyeId}`,
-            attributedValue: `<a href="https://sophye.io/verify/${sophyeId}">Verify on sophye.io</a>`,
-          },
-          {
-            key: 'profile',
-            label: 'Public profile',
-            value: `https://sophye.io/profile/${legalName.toLowerCase().replace(/\s+/g, '-')}`,
-          },
-        ],
-      },
-      barcodes: [{
-        message: `https://sophye.io/verify/${sophyeId}`,
-        format: 'PKBarcodeFormatQR',
-        messageEncoding: 'iso-8859-1',
-        altText: sophyeId,
-      }],
-      backgroundColor: 'rgb(10, 10, 10)',
-      foregroundColor: 'rgb(245, 244, 240)',
-      labelColor: 'rgb(136, 136, 136)',
-    }
-
-    // MVP: return pass JSON structure.
-    // Production: generate real .pkpass with passkit-generator.
-    //
-    // npm install passkit-generator
-    // Then replace this return with:
-    //   const { PKPass } = await import('passkit-generator')
-    //   const pass = await PKPass.from({ model: './certs/model', certificates }, passData)
-    //   const buf = pass.getAsBuffer()
-    //   return new NextResponse(buf, {
-    //     headers: { 'Content-Type': 'application/vnd.apple.pkpass' }
-    //   })
-
-    return NextResponse.json({ success: true, passData })
-  } catch (err) {
-    console.error('Wallet generation error:', err)
-    return NextResponse.json({ success: false, error: 'Failed to generate pass' }, { status: 500 })
-  }
-}
-
-export async function GET() {
-  // PassKit web service: iOS calls this to check for pass updates.
-  // 204 = no update available.
-  return new NextResponse(null, { status: 204 })
-}
-```
-
----
-
-## public/manifest.json
-
-```json
-{
-  "name": "Sophye",
-  "short_name": "Sophye",
-  "description": "Your music fingerprint. One verified identity for every session, deal, and credit.",
-  "start_url": "/",
-  "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#0A0A0A",
-  "theme_color": "#0A0A0A",
-  "categories": ["music", "productivity", "business"],
-  "icons": [
-    {
-      "src": "/icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icons/icon-1024.png",
-      "sizes": "1024x1024",
-      "type": "image/png",
-      "purpose": "any"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "New session",
-      "short_name": "Session",
-      "url": "/sessions/new",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "My profile",
-      "short_name": "Profile",
-      "url": "/dashboard",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
-    }
-  ]
-}
-```
-
----
+</body>
+</html>
