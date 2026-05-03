@@ -3,782 +3,1006 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sophye — Visual Walkthrough</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,700;0,900;1,400&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+<title>Sophye — Your music fingerprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
 <style>
+/* ── RESET & TOKENS ───────────────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --b:#0A0A0A;--w:#F5F4F0;--y:#E8F000;--ink:#3A3A3A;
-  --stone:#D0CFCB;--bg:#F0EFE9;--nb:#1A1A1A;--mg:#888;
+  --stone:#D0CFCB;--bg:#F0EFE9;--nb:#1A1A1A;--mg:#888888;
   --ff:'Libre Franklin','Franklin Gothic Medium',Arial,sans-serif;
   --fs:'Libre Baskerville',Georgia,serif;
+  --r:4px;--rc:8px;
 }
-html{background:#1a1a1a;font-family:var(--ff);-webkit-font-smoothing:antialiased}
-body{max-width:900px;margin:0 auto;padding:40px 24px 80px}
+html{font-family:var(--ff);background:var(--w);color:var(--b);-webkit-font-smoothing:antialiased}
+body{min-height:100vh;display:flex;flex-direction:column}
+::selection{background:var(--y);color:var(--b)}
+button,input{font-family:var(--ff)}
+a{text-decoration:none;color:inherit}
+input:focus{outline:none}
 
-/* ── CHROME ── */
-.page-title{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#555;margin-bottom:32px;display:flex;align-items:center;gap:12px}
-.page-title::after{content:'';flex:1;height:1px;background:#333}
+/* ── SCREEN SYSTEM ────────────────────────────────────────── */
+.screen{display:none;flex-direction:column;min-height:100vh;background:var(--w);animation:fadeUp .35s ease both}
+.screen.active{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
-.section{margin-bottom:56px}
-.section-lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#555;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
-.tag{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:2px}
-.tag-y{background:var(--y);color:var(--b)}
-.tag-b{background:#222;color:#888;border:1px solid #333}
-.tag-w{background:var(--w);color:var(--b)}
+/* ── PRIMITIVES ───────────────────────────────────────────── */
+.ybar{height:3px;background:var(--y);flex-shrink:0}
+.snav{padding:14px 24px;border-bottom:1px solid var(--stone);display:flex;align-items:center;justify-content:space-between;background:var(--w)}
+.wordmark{display:flex;align-items:center;gap:9px;font-weight:900;font-size:16px;letter-spacing:-.02em;color:var(--b);cursor:pointer}
+.smark{width:28px;height:28px;border-radius:5px;background:var(--b);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:var(--y);letter-spacing:-.04em;flex-shrink:0}
+.smark-lg{width:52px;height:52px;border-radius:9px;font-size:26px}
+.smark-xl{width:64px;height:64px;border-radius:12px;font-size:32px}
 
-/* ── BROWSER ── */
-.browser{background:var(--w);border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.06),0 8px 40px rgba(0,0,0,.5)}
-.bar{background:#2a2a2a;padding:9px 14px;display:flex;align-items:center;gap:8px}
-.dot{width:10px;height:10px;border-radius:50%}
-.url{flex:1;background:#1e1e1e;border-radius:4px;padding:4px 10px;font-size:10px;font-family:monospace;color:#666}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:var(--r);font-family:var(--ff);font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.btn-y{background:var(--y);color:var(--b);padding:12px 20px;font-size:12px}
+.btn-y:hover{background:#d4db00}
+.btn-y:active{transform:scale(.97)}
+.btn-b{background:var(--b);color:#fff;padding:12px 20px;font-size:12px}
+.btn-b:hover{background:var(--nb)}
+.btn-b:active{transform:scale(.97)}
+.btn-o{background:transparent;color:var(--b);padding:11px 20px;font-size:12px;border:1.5px solid var(--b)}
+.btn-o:hover{background:var(--bg)}
+.btn-o:active{transform:scale(.97)}
+.btn-sm{padding:8px 14px;font-size:10px}
+.btn-lg{padding:14px 24px;font-size:13px}
+.btn-full{width:100%}
+.btn-ghost{background:transparent;color:var(--mg);border:none;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;text-decoration:underline;font-family:var(--ff)}
+.btn-ghost:hover{color:var(--b)}
 
-/* ── PHONE ── */
-.phone-scene{background:#111;border-radius:12px;padding:16px;display:flex;justify-content:center;align-items:flex-start}
-.phone{width:210px;background:var(--w);border-radius:30px;overflow:hidden;box-shadow:0 0 0 1.5px rgba(255,255,255,.08),0 16px 48px rgba(0,0,0,.6)}
-.notch{height:22px;background:var(--b);border-radius:0 0 12px 12px;width:64px;margin:0 auto}
-.pscreen{padding:14px}
+/* Inputs */
+.sinput{width:100%;padding:11px 14px;border:1.5px solid var(--stone);border-radius:var(--r);font-size:13px;color:var(--b);background:var(--w);transition:border-color .15s}
+.sinput:focus{border-color:var(--b)}
+.sinput.mono{font-family:monospace;letter-spacing:.05em}
+.slabel{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);display:block;margin-bottom:6px}
+.shint{font-size:11px;color:var(--mg);margin-top:5px}
+.serr{font-size:11px;color:#d00;margin-top:5px;font-weight:600}
 
-/* ── SOPHYE PRIMITIVES ── */
-.ybar{height:3px;background:var(--y)}
-.smark{background:var(--b);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;color:var(--y);letter-spacing:-.04em;flex-shrink:0}
-.wordmark{display:flex;align-items:center;gap:8px;font-weight:900;letter-spacing:-.02em;color:var(--b)}
-.snav{padding:12px 20px;border-bottom:1px solid var(--stone);background:var(--w);display:flex;align-items:center;justify-content:space-between}
+/* Cards */
+.card{background:var(--w);border:1.5px solid var(--b);border-radius:var(--rc)}
+.card-dark{background:var(--b);border:1.5px solid var(--b);border-radius:var(--rc)}
+.card-bg{background:var(--bg);border-radius:6px}
 
-/* ── BUTTONS ── */
-.by{background:var(--y);color:var(--b);font-family:var(--ff);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:10px 16px;border-radius:4px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
-.bb{background:var(--b);color:#fff;font-family:var(--ff);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:10px 16px;border-radius:4px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
-.bo{background:transparent;color:var(--b);font-family:var(--ff);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:9px 16px;border-radius:4px;border:1.5px solid var(--b);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
-
-/* ── INPUT ── */
-.sinput{width:100%;padding:10px 12px;border:1.5px solid var(--stone);border-radius:4px;font-family:var(--ff);font-size:12px;color:var(--b);background:var(--w);outline:none;display:block}
-.sinput.active{border-color:var(--b)}
-.slabel{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);display:block;margin-bottom:5px}
-.shint{font-size:10px;color:var(--mg);margin-top:4px}
-
-/* ── PROGRESS ── */
-.prog{margin-bottom:24px}
-.prog-meta{display:flex;justify-content:space-between;margin-bottom:5px}
-.prog-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)}
-.prog-track{height:3px;background:var(--stone);border-radius:2px;overflow:hidden}
-.prog-fill{height:100%;background:var(--y);border-radius:2px}
-
-/* ── BADGES ── */
-.bdg{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:2px}
+/* Badges */
+.bdg{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:2px}
 .bdg-y{background:var(--y);color:var(--b)}
 .bdg-b{background:var(--b);color:var(--y)}
 .bdg-o{background:transparent;color:var(--b);border:1.5px solid var(--b)}
-.dot5{width:5px;height:5px;border-radius:50%}
+.bdg-dot{width:5px;height:5px;border-radius:50%}
 
-/* ── WALLET CARD ── */
-.wcard{background:var(--b);border-radius:14px;overflow:hidden}
+/* Tags */
+.role-tag{display:inline-flex;align-items:center;padding:7px 12px;border-radius:var(--r);border:1.5px solid var(--b);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:all .12s;margin:3px;background:var(--w);color:var(--b)}
+.role-tag:hover{background:var(--bg)}
+.role-tag.sel{background:var(--b);color:var(--y)}
+.pro-tag{display:inline-flex;align-items:center;padding:7px 12px;border-radius:var(--r);border:1.5px solid var(--b);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:all .12s;margin:3px;background:var(--w);color:var(--b)}
+.pro-tag:hover{background:var(--bg)}
+.pro-tag.sel{background:var(--b);color:var(--y)}
+
+/* Progress bar */
+.prog-wrap{margin-bottom:28px}
+.prog-meta{display:flex;justify-content:space-between;margin-bottom:6px}
+.prog-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)}
+.prog-track{height:3px;background:var(--stone);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--y);border-radius:2px;transition:width .35s ease}
+
+/* Dividers */
+.div-b{border:none;border-top:1.5px solid var(--b);margin:24px 0}
+.div-l{border:none;border-top:1px solid var(--stone);margin:16px 0}
+
+/* Status */
+.st-conf{background:var(--y);color:var(--b);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:2px}
+.st-reg{background:var(--b);color:var(--y);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:2px}
+.st-draft{background:var(--stone);color:var(--ink);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:2px}
+
+/* Wallet card */
+.wcard{background:var(--b);border-radius:16px;overflow:hidden}
 .wbar{height:3px;background:var(--y)}
-.whdr{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center}
-.wbrand{display:flex;align-items:center;gap:6px}
-.ws{background:var(--y);border-radius:3px;display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--b);letter-spacing:-.04em;flex-shrink:0}
-.wtype{font-size:7px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#555}
-.wname-blk{padding:12px 16px 10px}
-.wname{font-weight:900;color:#fff;letter-spacing:-.02em;line-height:1;margin-bottom:4px}
+.whdr{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;align-items:center}
+.wbrand{display:flex;align-items:center;gap:7px}
+.ws{width:20px;height:20px;background:var(--y);border-radius:3px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;color:var(--b);letter-spacing:-.04em}
+.wname-blk{padding:14px 18px 12px}
+.wname{font-weight:900;color:#fff;letter-spacing:-.02em;line-height:1;margin-bottom:5px}
 .wver{display:flex;align-items:center;gap:5px}
-.wvdot{width:5px;height:5px;border-radius:50%;background:var(--y)}
-.wvtxt{font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--y)}
-.wfields{padding:10px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;border-top:1px solid rgba(255,255,255,.06)}
-.wfl{font-size:7px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444;margin-bottom:2px}
-.wfv{font-size:11px;font-weight:700;color:#fff}
-.wfv-big{font-weight:900;color:#fff;letter-spacing:-.03em;line-height:1}
-.wqr{background:#111;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.wvdot{width:6px;height:6px;border-radius:50%;background:var(--y)}
+.wvtxt{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--y)}
+.wfields{padding:12px 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;border-top:1px solid rgba(255,255,255,.07)}
+.wfl{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444;margin-bottom:3px}
+.wfv{font-size:12px;font-weight:700;color:#fff}
+.wfvb{font-weight:900;color:#fff;letter-spacing:-.03em;line-height:1}
+.wqr{background:#111;padding:14px 18px;display:flex;align-items:center;gap:14px}
 .wqr-box{background:#fff;border-radius:4px;padding:5px;flex-shrink:0}
-.wid{font-family:monospace;font-weight:700;color:#fff;letter-spacing:.02em;margin-bottom:2px}
-.wsub{font-size:8px;color:#555}
+.wid{font-family:monospace;font-weight:700;color:#fff;letter-spacing:.02em;margin-bottom:3px}
+.wsub{font-size:9px;color:#555}
+.mono{font-family:monospace;letter-spacing:.04em}
 
-/* ── ROLE TAGS ── */
-.ron{background:var(--b);color:var(--y);border:1.5px solid var(--b);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:6px 10px;border-radius:4px;display:inline-block;margin:2px}
-.roff{background:var(--w);color:var(--b);border:1.5px solid var(--b);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:6px 10px;border-radius:4px;display:inline-block;margin:2px}
+/* Stat boxes */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px}
+.stat-box{background:var(--bg);border-radius:6px;padding:20px;text-align:center}
+.stat-n{font-weight:900;color:var(--b);letter-spacing:-.03em;line-height:1;margin-bottom:5px;font-size:38px}
+.stat-l{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)}
 
-/* ── STATUS TAGS ── */
-.st-conf{background:var(--y);color:var(--b);font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:2px}
-.st-reg{background:var(--b);color:var(--y);font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:2px}
-.st-draft{background:var(--stone);color:var(--ink);font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:2px}
+/* Layout helpers */
+.page-inner{max-width:900px;margin:0 auto;width:100%}
+.center-col{max-width:400px;margin:0 auto;width:100%}
+.form-gap{display:flex;flex-direction:column;gap:18px}
+.row{display:flex;gap:10px;align-items:flex-start}
+.col2{display:grid;grid-template-columns:1fr 1fr;gap:32px}
 
-/* ── DIVIDERS ── */
-.div-b{border:none;border-top:1.5px solid var(--b);margin:20px 0}
-.div-l{border:none;border-top:1px solid var(--stone);margin:12px 0}
+/* Verification tick */
+.tick-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg);border:1px solid var(--stone);border-radius:6px}
+.tick{width:22px;height:22px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
-/* ── LAYOUT ── */
-.cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.cols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.mcard{background:var(--w);border:1.5px solid var(--b);border-radius:8px}
-.mcard-dark{background:var(--b);border:1.5px solid var(--b);border-radius:8px}
-.stat-box{background:var(--bg);border-radius:6px;padding:18px;text-align:center}
-.mono{font-family:monospace;font-weight:700;letter-spacing:.04em}
+/* Toast */
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--b);color:#fff;padding:12px 22px;border-radius:6px;font-size:12px;font-weight:700;letter-spacing:.04em;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── LANDING ──────────────────────────────────────────────── */
+#landing-hero{padding:56px 24px 48px;display:grid;grid-template-columns:1fr 300px;gap:48px;align-items:center}
+#landing-hero h1{font-size:clamp(44px,7vw,72px);font-weight:900;line-height:.92;letter-spacing:-.035em;color:var(--b);margin-bottom:18px}
+.hero-italic{font-family:var(--fs);font-style:italic;font-size:clamp(17px,2.2vw,22px);color:var(--ink);line-height:1.4;margin-bottom:26px}
+.hero-btns{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.hero-checks{border-top:1px solid var(--stone)}
+.hero-check{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--stone)}
+.ydot{width:7px;height:7px;border-radius:50%;background:var(--y);flex-shrink:0}
+
+.connects-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:28px 24px 36px;border-top:1.5px solid var(--b)}
+.connect-card{border:1.5px solid var(--b);border-radius:var(--rc);padding:14px}
+.connect-cat{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:10px}
+.connect-item{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:11px;color:var(--ink)}
+.connect-dot{width:4px;height:4px;border-radius:50%;background:var(--stone);flex-shrink:0}
+
+/* ── CONFIRMED (black screen) ─────────────────────────────── */
+#screen-confirmed{background:var(--b)}
+#screen-confirmed .snav{background:var(--nb);border-color:rgba(255,255,255,.08)}
+#screen-confirmed .snav .wordmark{color:#fff}
+.confirmed-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center}
+.id-card{background:#111;border-radius:10px;padding:20px 22px;width:100%;max-width:340px;text-align:left;margin:0 auto}
+.id-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:14px;border-top:1px solid #1e1e1e;margin-top:14px}
+.id-fl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444;margin-bottom:3px}
+.id-fv{font-size:12px;font-weight:700;color:#fff}
+.id-fv.mono{font-family:monospace;font-size:11px}
+.id-fv.yellow{color:var(--y);font-family:monospace;font-size:11px}
+
+/* ── DASHBOARD ────────────────────────────────────────────── */
+.next-action{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--stone)}
+.next-action:last-child{border-bottom:none}
+.na-num{font-weight:900;font-size:11px;color:var(--stone);flex-shrink:0;margin-top:2px;letter-spacing:.05em;min-width:20px}
+.na-title{font-size:13px;font-weight:700;color:var(--b);margin-bottom:3px}
+.na-desc{font-size:11px;color:var(--mg);margin-bottom:6px}
+.na-link{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--b);text-decoration:underline;cursor:pointer;border:none;background:none;font-family:var(--ff)}
+.session-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--stone)}
+.session-row:last-child{border-bottom:none}
+.profile-banner{padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* ── PROFILE ──────────────────────────────────────────────── */
+.profile-layout{display:grid;grid-template-columns:1fr 300px;gap:40px;padding:32px 24px}
+.profile-hdr{display:flex;gap:16px;align-items:flex-start;margin-bottom:20px}
+.avatar{width:56px;height:56px;border-radius:50%;background:var(--b);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:var(--y);flex-shrink:0;letter-spacing:-.01em}
+.id-table-row{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--stone)}
+.id-table-row:last-child{border-bottom:none}
+
+/* ── FOOTER ───────────────────────────────────────────────── */
+footer{border-top:1px solid var(--stone);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media(max-width:700px){
+  #landing-hero{grid-template-columns:1fr;gap:32px}
+  #wcard-preview{display:none}
+  .connects-grid{grid-template-columns:repeat(2,1fr)}
+  .col2{grid-template-columns:1fr}
+  .profile-layout{grid-template-columns:1fr}
+  .profile-wallet{display:none}
+  .stat-n{font-size:28px}
+}
 </style>
 </head>
 <body>
 
-<div class="page-title">Sophye — Full UI Walkthrough · 9 screens</div>
-
-<!-- ══════════════════════════════════════════
-     SCREEN 1 — LANDING
-══════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-lbl">
-    Landing page — sophye.io
-    <span class="tag tag-y">Entry point</span>
-  </div>
-  <div class="browser">
-    <div class="bar">
-      <div class="dot" style="background:#FF5F57"></div>
-      <div class="dot" style="background:#FEBC2E"></div>
-      <div class="dot" style="background:#28C840"></div>
-      <div class="url">sophye.io</div>
+<!-- ═══════════════════════════════════════════════════
+     SCREEN: LANDING
+═══════════════════════════════════════════════════ -->
+<div id="screen-landing" class="screen active">
+  <div class="ybar"></div>
+  <nav class="snav">
+    <div class="wordmark" onclick="go('landing')">
+      <div class="smark">S</div>Sophye
     </div>
-    <div style="background:var(--w)">
-      <div class="ybar"></div>
-      <div class="snav">
-        <div class="wordmark" style="font-size:15px">
-          <div class="smark" style="width:28px;height:28px;font-size:14px">S</div>
-          Sophye
-        </div>
-        <div style="display:flex;gap:12px;align-items:center">
-          <span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Sign in</span>
-          <button class="by" style="font-size:10px;padding:8px 14px">Get started →</button>
-        </div>
-      </div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <button class="btn btn-ghost" onclick="go('join')">Sign in</button>
+      <button class="btn btn-y btn-sm" onclick="go('join')">Get started →</button>
+    </div>
+  </nav>
 
-      <!-- Hero -->
-      <div style="padding:48px 48px 40px;display:grid;grid-template-columns:1fr 290px;gap:48px;align-items:center">
+  <div style="flex:1">
+    <div class="page-inner">
+      <div id="landing-hero">
         <div>
           <div class="bdg bdg-b" style="margin-bottom:18px">
-            <div class="dot5" style="background:var(--y)"></div>
+            <div class="bdg-dot" style="background:var(--y)"></div>
             12,000+ creators · Free to start
           </div>
-          <h1 style="font-family:var(--ff);font-weight:900;font-size:58px;line-height:.92;letter-spacing:-.035em;color:var(--b);margin-bottom:16px">
-            Your music<br>fingerprint.
-          </h1>
-          <p style="font-family:var(--fs);font-style:italic;font-size:20px;color:var(--ink);line-height:1.35;margin-bottom:24px">
-            One verified identity.<br>Every session, deal, and credit — yours forever.
-          </p>
-          <div style="display:flex;gap:10px;margin-bottom:24px">
-            <button class="by">Create your fingerprint →</button>
-            <button class="bo">See example profile</button>
+          <h1>Your music<br>fingerprint.</h1>
+          <p class="hero-italic">One verified identity.<br>Every session, deal, and credit — yours forever.</p>
+          <div class="hero-btns">
+            <button class="btn btn-y btn-lg" onclick="go('join')">Create your fingerprint →</button>
+            <button class="btn btn-o btn-lg" onclick="go('profile')">See example profile</button>
           </div>
-          <div>
-            <div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--stone)">
-              <div style="width:6px;height:6px;border-radius:50%;background:var(--y)"></div>
-              <span style="font-size:13px;color:var(--ink)">No credit card</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--stone)">
-              <div style="width:6px;height:6px;border-radius:50%;background:var(--y)"></div>
-              <span style="font-size:13px;color:var(--ink)">Under 3 minutes</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;padding:9px 0">
-              <div style="width:6px;height:6px;border-radius:50%;background:var(--y)"></div>
-              <span style="font-size:13px;color:var(--ink)">Apple Wallet pass included</span>
-            </div>
+          <div class="hero-checks">
+            <div class="hero-check"><div class="ydot"></div><span style="font-size:13px;color:var(--ink)">No credit card</span></div>
+            <div class="hero-check"><div class="ydot"></div><span style="font-size:13px;color:var(--ink)">Under 3 minutes</span></div>
+            <div class="hero-check"><div class="ydot"></div><span style="font-size:13px;color:var(--ink)">Apple Wallet pass included</span></div>
           </div>
         </div>
 
-        <!-- Wallet preview tilted -->
-        <div style="transform:rotate(-2.5deg);margin-top:16px">
+        <div id="wcard-preview" style="transform:rotate(-2deg)">
           <div class="wcard">
             <div class="wbar"></div>
             <div class="whdr">
-              <div class="wbrand">
-                <div class="ws" style="width:20px;height:20px;font-size:10px">S</div>
-                <span style="font-size:12px;font-weight:900;color:#fff;letter-spacing:-.01em">Sophye</span>
-              </div>
-              <span class="wtype">Creator ID</span>
+              <div class="wbrand"><div class="ws">S</div><span style="font-size:12px;font-weight:900;color:#fff">Sophye</span></div>
+              <span style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#555">Creator ID</span>
             </div>
             <div class="wname-blk">
               <div class="wname" style="font-size:20px">Maria Santos</div>
               <div class="wver"><div class="wvdot"></div><span class="wvtxt">Verified · ASCAP</span></div>
             </div>
             <div class="wfields">
-              <div>
-                <div class="wfl">Roles</div>
-                <div class="wfv" style="font-size:10px">Songwriter</div>
-                <div style="font-size:9px;color:#666;font-weight:500;margin-top:2px">Producer</div>
-              </div>
-              <div>
-                <div class="wfl">IPI</div>
-                <div class="wfv mono" style="font-size:9px">00 000 250</div>
-              </div>
-              <div>
-                <div class="wfl">Sessions</div>
-                <div class="wfv-big" style="font-size:26px">47</div>
-              </div>
+              <div><div class="wfl">Roles</div><div class="wfv" style="font-size:11px">Songwriter</div><div style="font-size:10px;color:#666;margin-top:2px">Producer</div></div>
+              <div><div class="wfl">IPI</div><div class="wfv mono" style="font-size:10px">00 000 250</div></div>
+              <div><div class="wfl">Sessions</div><div class="wfvb" style="font-size:28px">47</div></div>
             </div>
             <div class="wqr">
-              <div class="wqr-box" style="width:44px;height:44px">
+              <div class="wqr-box" style="width:46px;height:46px">
                 <svg viewBox="0 0 36 36" style="width:100%;height:100%">
-                  <rect x="1" y="1" width="12" height="12" rx="2" fill="#0A0A0A"/>
-                  <rect x="3" y="3" width="8" height="8" rx="1" fill="#fff"/>
-                  <rect x="4" y="4" width="6" height="6" fill="#0A0A0A"/>
-                  <rect x="21" y="1" width="12" height="12" rx="2" fill="#0A0A0A"/>
-                  <rect x="23" y="3" width="8" height="8" rx="1" fill="#fff"/>
-                  <rect x="24" y="4" width="6" height="6" fill="#0A0A0A"/>
-                  <rect x="1" y="21" width="12" height="12" rx="2" fill="#0A0A0A"/>
-                  <rect x="3" y="23" width="8" height="8" rx="1" fill="#fff"/>
-                  <rect x="4" y="24" width="6" height="6" fill="#0A0A0A"/>
-                  <rect x="15" y="15" width="4" height="4" fill="#E8F000"/>
-                  <rect x="21" y="15" width="3" height="3" fill="#0A0A0A"/>
-                  <rect x="26" y="15" width="3" height="3" fill="#0A0A0A"/>
-                  <rect x="15" y="21" width="3" height="3" fill="#0A0A0A"/>
-                  <rect x="21" y="21" width="3" height="3" fill="#E8F000"/>
-                  <rect x="26" y="21" width="3" height="3" fill="#0A0A0A"/>
-                  <rect x="15" y="26" width="3" height="3" fill="#0A0A0A"/>
-                  <rect x="26" y="26" width="3" height="3" fill="#0A0A0A"/>
+                  <rect x="1" y="1" width="12" height="12" rx="2" fill="#0A0A0A"/><rect x="3" y="3" width="8" height="8" rx="1" fill="#fff"/><rect x="4" y="4" width="6" height="6" fill="#0A0A0A"/>
+                  <rect x="21" y="1" width="12" height="12" rx="2" fill="#0A0A0A"/><rect x="23" y="3" width="8" height="8" rx="1" fill="#fff"/><rect x="24" y="4" width="6" height="6" fill="#0A0A0A"/>
+                  <rect x="1" y="21" width="12" height="12" rx="2" fill="#0A0A0A"/><rect x="3" y="23" width="8" height="8" rx="1" fill="#fff"/><rect x="4" y="24" width="6" height="6" fill="#0A0A0A"/>
+                  <rect x="15" y="15" width="4" height="4" fill="#E8F000"/><rect x="21" y="15" width="3" height="3" fill="#0A0A0A"/><rect x="26" y="15" width="3" height="3" fill="#0A0A0A"/>
+                  <rect x="15" y="21" width="3" height="3" fill="#0A0A0A"/><rect x="21" y="21" width="3" height="3" fill="#E8F000"/><rect x="26" y="21" width="3" height="3" fill="#0A0A0A"/>
+                  <rect x="15" y="26" width="3" height="3" fill="#0A0A0A"/><rect x="26" y="26" width="3" height="3" fill="#0A0A0A"/>
                 </svg>
               </div>
-              <div>
-                <div class="wid" style="font-size:12px">SPH-2847-MSAN</div>
-                <div class="wsub">Scan to verify · sophye.io</div>
-              </div>
+              <div><div class="wid" style="font-size:13px">SPH-2847-MSAN</div><div class="wsub">Scan to verify · sophye.io</div></div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Connects grid -->
-      <div style="padding:28px 48px 36px;border-top:1.5px solid var(--b)">
-        <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:14px">Connects to your whole world</p>
-        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px">
-          <div class="mcard" style="padding:14px">
-            <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">PROs</p>
-            <div style="font-size:11px;color:var(--ink);line-height:2">ASCAP<br>BMI<br>PRS<br>SOCAN</div>
-          </div>
-          <div class="mcard" style="padding:14px">
-            <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">DAWs</p>
-            <div style="font-size:11px;color:var(--ink);line-height:2">Pro Tools<br>FL Studio<br>Ableton<br>Logic Pro</div>
-          </div>
-          <div class="mcard" style="padding:14px">
-            <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Distributors</p>
-            <div style="font-size:11px;color:var(--ink);line-height:2">DistroKid<br>TuneCore<br>CD Baby<br>Amuse</div>
-          </div>
-          <div class="mcard" style="padding:14px">
-            <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Identity</p>
-            <div style="font-size:11px;color:var(--ink);line-height:2">ISNI auto-reg<br>IPI verify<br>SoundExchange<br>The MLC</div>
-          </div>
-          <div class="mcard" style="padding:14px">
-            <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Business</p>
-            <div style="font-size:11px;color:var(--ink);line-height:2">Label onboard<br>Publisher portals<br>DocuSign<br>Management</div>
-          </div>
-          <div class="mcard" style="padding:14px">
-            <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Platforms</p>
-            <div style="font-size:11px;color:var(--ink);line-height:2">Spotify credits<br>Apple Music<br>YouTube CMS<br>Sound Credit</div>
-          </div>
-        </div>
+    <div class="connects-grid page-inner">
+      <div style="grid-column:1/-1;margin-bottom:4px">
+        <span style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg)">Connects to your whole world</span>
       </div>
+      <div class="connect-card"><div class="connect-cat">PROs</div><div class="connect-item"><div class="connect-dot"></div>ASCAP</div><div class="connect-item"><div class="connect-dot"></div>BMI</div><div class="connect-item"><div class="connect-dot"></div>PRS</div><div class="connect-item"><div class="connect-dot"></div>SOCAN</div></div>
+      <div class="connect-card"><div class="connect-cat">DAWs</div><div class="connect-item"><div class="connect-dot"></div>Pro Tools</div><div class="connect-item"><div class="connect-dot"></div>FL Studio</div><div class="connect-item"><div class="connect-dot"></div>Ableton</div><div class="connect-item"><div class="connect-dot"></div>Logic Pro</div></div>
+      <div class="connect-card"><div class="connect-cat">Distributors</div><div class="connect-item"><div class="connect-dot"></div>DistroKid</div><div class="connect-item"><div class="connect-dot"></div>TuneCore</div><div class="connect-item"><div class="connect-dot"></div>CD Baby</div><div class="connect-item"><div class="connect-dot"></div>Amuse</div></div>
+      <div class="connect-card"><div class="connect-cat">Identity</div><div class="connect-item"><div class="connect-dot"></div>ISNI auto-reg</div><div class="connect-item"><div class="connect-dot"></div>IPI verify</div><div class="connect-item"><div class="connect-dot"></div>SoundExchange</div><div class="connect-item"><div class="connect-dot"></div>The MLC</div></div>
+      <div class="connect-card"><div class="connect-cat">Business</div><div class="connect-item"><div class="connect-dot"></div>Label onboard</div><div class="connect-item"><div class="connect-dot"></div>Publisher portals</div><div class="connect-item"><div class="connect-dot"></div>DocuSign</div><div class="connect-item"><div class="connect-dot"></div>Management</div></div>
+      <div class="connect-card"><div class="connect-cat">Platforms</div><div class="connect-item"><div class="connect-dot"></div>Spotify credits</div><div class="connect-item"><div class="connect-dot"></div>Apple Music</div><div class="connect-item"><div class="connect-dot"></div>YouTube CMS</div><div class="connect-item"><div class="connect-dot"></div>Sound Credit</div></div>
+    </div>
+
+    <div style="padding:60px 24px;text-align:center;border-top:1.5px solid var(--b)" class="page-inner">
+      <h2 style="font-size:clamp(40px,6vw,64px);font-weight:900;letter-spacing:-.03em;line-height:.93;margin-bottom:14px">Ready?</h2>
+      <p style="font-family:var(--fs);font-style:italic;font-size:20px;color:var(--ink);margin-bottom:28px">Create your fingerprint in under 3 minutes.</p>
+      <button class="btn btn-y btn-lg" onclick="go('join')">Create your fingerprint →</button>
     </div>
   </div>
+
+  <footer>
+    <div class="wordmark" onclick="go('landing')"><div class="smark">S</div>Sophye</div>
+    <span style="font-size:11px;color:var(--mg)">© 2025 Sophye. All rights reserved.</span>
+  </footer>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SCREEN 2 — JOIN
-══════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-lbl">
-    /join — Account creation · 0:20
-    <span class="tag tag-b">Auth</span>
-  </div>
-  <div class="cols2">
-    <!-- Web -->
-    <div class="browser">
-      <div class="bar">
-        <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
-        <div class="url">sophye.io/join</div>
-      </div>
-      <div style="background:var(--w)">
-        <div class="ybar"></div>
-        <div class="snav">
-          <div class="wordmark" style="font-size:13px"><div class="smark" style="width:22px;height:22px;font-size:11px">S</div>Sophye</div>
-          <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">← Back</span>
+<!-- ═══════════════════════════════════════════════════
+     SCREEN: JOIN
+═══════════════════════════════════════════════════ -->
+<div id="screen-join" class="screen">
+  <div class="ybar"></div>
+  <nav class="snav">
+    <div class="wordmark" onclick="go('landing')"><div class="smark">S</div>Sophye</div>
+    <button class="btn btn-ghost" onclick="go('landing')">← Back</button>
+  </nav>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:48px 24px">
+    <div class="center-col">
+      <p class="slabel" style="margin-bottom:8px">Step 1 of 6</p>
+      <h2 style="font-size:26px;font-weight:900;letter-spacing:-.02em;margin-bottom:8px">Create your account</h2>
+      <p style="font-size:13px;color:var(--ink);margin-bottom:24px">Takes about 2 minutes. No credit card needed.</p>
+
+      <div class="form-gap">
+        <button class="btn btn-b btn-full" style="padding:13px;font-size:12px;gap:10px" onclick="go('setup-name')">
+          <svg width="13" height="15" viewBox="0 0 14 17" fill="white"><path d="M7 .5C4.8.5 3 2.3 3 4.5s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 10c-4.4 0-8 1.8-8 4v1h16v-1c0-2.2-3.6-4-8-4z"/></svg>
+          Continue with Apple
+        </button>
+        <button class="btn btn-o btn-full" style="padding:12px;font-size:12px;gap:10px" onclick="go('setup-name')">
+          <svg width="14" height="14" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Continue with Google
+        </button>
+
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="flex:1;height:1px;background:var(--stone)"></div>
+          <span style="font-size:11px;color:var(--mg)">or use email</span>
+          <div style="flex:1;height:1px;background:var(--stone)"></div>
         </div>
-        <div style="padding:32px 40px;max-width:340px">
-          <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Step 1 of 6</p>
-          <h2 style="font-family:var(--ff);font-weight:900;font-size:24px;letter-spacing:-.02em;color:var(--b);margin-bottom:6px">Create your account</h2>
-          <p style="font-size:12px;color:var(--ink);margin-bottom:20px">Takes about 2 minutes. No credit card needed.</p>
-          <button class="bb" style="width:100%;margin-bottom:8px;font-size:10px;gap:8px">
-            <svg width="12" height="14" viewBox="0 0 14 17" fill="white"><path d="M13.3 8.7c0-2.8 2.3-4.2 2.4-4.3-1.3-1.9-3.4-2.2-4.1-2.2-1.7-.2-3.4 1-4.3 1-.9 0-2.2-1-3.6-1-1.9 0-3.6 1.1-4.6 2.7-2 3.4-.5 8.4 1.4 11.1.9 1.3 2 2.8 3.5 2.8 1.4-.1 2-1 3.6-1 1.7 0 2.2 1 3.6 1 1.5 0 2.5-1.4 3.4-2.7.7-1 1.2-2 1.5-2.2-.1 0-2.8-1.2-2.8-4.2z"/></svg>
-            Continue with Apple
-          </button>
-          <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:#fff;color:var(--b);border:1.5px solid var(--stone);border-radius:4px;font-family:var(--ff);font-weight:700;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px;cursor:pointer">
-            <svg width="13" height="13" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-            Continue with Google
-          </button>
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-            <div style="flex:1;height:1px;background:var(--stone)"></div>
-            <span style="font-size:10px;color:var(--mg)">or use email</span>
-            <div style="flex:1;height:1px;background:var(--stone)"></div>
-          </div>
+
+        <div>
           <label class="slabel">Email address</label>
-          <input class="sinput" type="email" placeholder="you@example.com" style="margin-bottom:10px"/>
-          <button class="by" style="width:100%;font-size:10px">Send magic link →</button>
-          <p style="font-size:10px;color:var(--mg);text-align:center;margin-top:8px">No password needed · We email you a link</p>
+          <input class="sinput" id="join-email" type="email" placeholder="you@example.com">
         </div>
-      </div>
-    </div>
-    <!-- iOS -->
-    <div class="phone-scene">
-      <div class="phone">
-        <div class="notch"></div>
-        <div class="pscreen" style="background:var(--w)">
-          <div class="ybar" style="margin-bottom:12px"></div>
-          <div class="wordmark" style="font-size:12px;margin-bottom:18px"><div class="smark" style="width:18px;height:18px;font-size:9px">S</div>Sophye</div>
-          <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);margin-bottom:6px">Step 1 of 6</p>
-          <h2 style="font-family:var(--ff);font-weight:900;font-size:17px;letter-spacing:-.02em;color:var(--b);margin-bottom:4px">Create account</h2>
-          <p style="font-size:10px;color:var(--mg);margin-bottom:14px">2 minutes. Free.</p>
-          <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:var(--b);color:#fff;border:none;border-radius:4px;font-family:var(--ff);font-weight:700;font-size:9px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">
-            <svg width="9" height="11" viewBox="0 0 14 17" fill="white"><path d="M13.3 8.7c0-2.8 2.3-4.2 2.4-4.3-1.3-1.9-3.4-2.2-4.1-2.2-1.7-.2-3.4 1-4.3 1-.9 0-2.2-1-3.6-1-1.9 0-3.6 1.1-4.6 2.7-2 3.4-.5 8.4 1.4 11.1.9 1.3 2 2.8 3.5 2.8 1.4-.1 2-1 3.6-1 1.7 0 2.2 1 3.6 1 1.5 0 2.5-1.4 3.4-2.7.7-1 1.2-2 1.5-2.2-.1 0-2.8-1.2-2.8-4.2z"/></svg>
-            Sign in with Apple
-          </button>
-          <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:#fff;color:var(--b);border:1.5px solid var(--stone);border-radius:4px;font-family:var(--ff);font-weight:700;font-size:9px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px">
-            <svg width="10" height="10" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-            Sign in with Google
-          </button>
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
-            <div style="flex:1;height:1px;background:var(--stone)"></div>
-            <span style="font-size:8px;color:var(--mg)">or email</span>
-            <div style="flex:1;height:1px;background:var(--stone)"></div>
-          </div>
-          <input class="sinput" placeholder="Email address" style="font-size:10px;padding:8px;margin-bottom:7px"/>
-          <button class="by" style="width:100%;font-size:9px;padding:9px">Magic link →</button>
-        </div>
+        <button class="btn btn-y btn-full" style="padding:13px;font-size:12px" onclick="handleMagicLink()">Send magic link →</button>
+        <p style="font-size:11px;color:var(--mg);text-align:center">No password needed · We email you a link</p>
+        <p style="font-size:12px;color:var(--mg);text-align:center">Already have an account? <button class="btn btn-ghost" onclick="go('dashboard')" style="font-size:12px">Sign in</button></p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SCREENS 3+4 — NAME + ROLES
-══════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-lbl">
-    /setup/name + /setup/roles · 0:45 – 1:25
-    <span class="tag tag-b">Onboarding</span>
-  </div>
-  <div class="cols2">
-    <!-- Name -->
-    <div class="browser">
-      <div class="bar">
-        <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
-        <div class="url">sophye.io/setup/name</div>
+<!-- ═══════════════════════════════════════════════════
+     SCREEN: SETUP — NAME
+═══════════════════════════════════════════════════ -->
+<div id="screen-setup-name" class="screen">
+  <div class="ybar"></div>
+  <nav class="snav">
+    <div class="wordmark" onclick="go('landing')"><div class="smark">S</div>Sophye</div>
+    <span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Setup</span>
+  </nav>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:48px 24px">
+    <div class="center-col">
+      <div class="prog-wrap">
+        <div class="prog-meta"><span class="prog-lbl">Step 2 of 6</span><span class="prog-lbl">Name</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:33%"></div></div>
       </div>
-      <div style="background:var(--w);padding:32px 36px">
-        <div class="prog">
-          <div class="prog-meta"><span class="prog-lbl">Step 2 of 6</span><span class="prog-lbl">Name</span></div>
-          <div class="prog-track"><div class="prog-fill" style="width:33%"></div></div>
-        </div>
-        <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Your identity</p>
-        <h2 style="font-family:var(--ff);font-weight:900;font-size:24px;letter-spacing:-.02em;color:var(--b);margin-bottom:6px">What's your name?</h2>
-        <p style="font-size:12px;color:var(--ink);margin-bottom:20px">Your legal name is used for royalties. Your stage name is what collaborators see.</p>
-        <label class="slabel">Legal name</label>
-        <input class="sinput active" value="Maria Santos" style="margin-bottom:4px"/>
-        <p class="shint" style="margin-bottom:16px">Used for PRO registration and split sheets</p>
-        <label class="slabel">Stage name (optional)</label>
-        <input class="sinput" placeholder="MARA" style="margin-bottom:4px"/>
-        <p class="shint" style="margin-bottom:22px">What collaborators and studios will see</p>
-        <div style="display:flex;gap:10px">
-          <button class="bo" style="font-size:10px;padding:9px 14px">← Back</button>
-          <button class="by" style="flex:1;font-size:10px">Continue →</button>
-        </div>
-      </div>
-    </div>
-    <!-- Roles -->
-    <div class="browser">
-      <div class="bar">
-        <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
-        <div class="url">sophye.io/setup/roles</div>
-      </div>
-      <div style="background:var(--w);padding:32px 36px">
-        <div class="prog">
-          <div class="prog-meta"><span class="prog-lbl">Step 3 of 6</span><span class="prog-lbl">Roles</span></div>
-          <div class="prog-track"><div class="prog-fill" style="width:50%"></div></div>
-        </div>
-        <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Your roles</p>
-        <h2 style="font-family:var(--ff);font-weight:900;font-size:24px;letter-spacing:-.02em;color:var(--b);margin-bottom:6px">What do you create?</h2>
-        <p style="font-size:12px;color:var(--ink);margin-bottom:14px">Select all that apply. These become your default roles on every session.</p>
-        <div style="margin-bottom:14px">
-          <span class="ron">Songwriter</span><span class="ron">Producer</span>
-          <span class="roff">Topliner</span><span class="roff">Beatmaker</span>
-          <span class="ron">Lead Vocalist</span><span class="roff">Featured Artist</span>
-          <span class="roff">Session Musician</span><span class="roff">Mix Engineer</span>
-          <span class="roff">Mastering</span><span class="roff">Composer</span>
-          <span class="roff">Lyricist</span><span class="roff">Arranger</span><span class="roff">A&R</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--stone);margin-bottom:14px">
-          <div style="width:16px;height:16px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3.5 5.5L7 1" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <span style="font-size:12px;font-weight:600;color:var(--b)">3 roles selected · you can change these anytime</span>
-        </div>
-        <div style="display:flex;gap:10px">
-          <button class="bo" style="font-size:10px;padding:9px 14px">← Back</button>
-          <button class="by" style="flex:1;font-size:10px">Continue →</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     SCREEN 5 — PRO + IPI
-══════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-lbl">
-    /setup/pro — PRO + IPI verification · 1:25 – 1:55
-    <span class="tag tag-b">Onboarding</span>
-  </div>
-  <div class="browser">
-    <div class="bar">
-      <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
-      <div class="url">sophye.io/setup/pro</div>
-    </div>
-    <div style="background:var(--w);padding:36px 48px">
-      <div style="max-width:420px">
-        <div class="prog">
-          <div class="prog-meta"><span class="prog-lbl">Step 4 of 6</span><span class="prog-lbl">PRO</span></div>
-          <div class="prog-track"><div class="prog-fill" style="width:66%"></div></div>
-        </div>
-        <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Your rights org</p>
-        <h2 style="font-family:var(--ff);font-weight:900;font-size:24px;letter-spacing:-.02em;color:var(--b);margin-bottom:6px">Your performing rights org</h2>
-        <p style="font-size:12px;color:var(--ink);margin-bottom:20px">This is what makes your identity verifiable. Your IPI links you to royalties worldwide.</p>
-        <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:8px">Which PRO are you with?</p>
-        <div style="margin-bottom:18px">
-          <span class="ron">ASCAP</span><span class="roff">BMI</span><span class="roff">SESAC</span>
-          <span class="roff">PRS</span><span class="roff">SOCAN</span><span class="roff">GEMA</span>
-          <span class="roff">APRA</span><span class="roff">Other</span>
-        </div>
-        <label class="slabel">IPI / CAE number</label>
-        <div style="display:flex;gap:8px;margin-bottom:4px">
-          <input class="sinput active mono" value="00 000 000 250" style="flex:1"/>
-          <button class="bb" style="font-size:10px;padding:10px 14px;flex-shrink:0">Look up →</button>
-        </div>
-        <p class="shint" style="margin-bottom:14px">Find this in your ASCAP member portal under your profile</p>
-        <!-- Verified result -->
-        <div style="background:var(--bg);border:1px solid var(--stone);border-radius:6px;padding:12px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
-          <div style="width:20px;height:20px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div>
-            <p style="font-size:12px;font-weight:700;color:var(--b)">Maria Santos · ASCAP confirmed</p>
-            <p style="font-size:10px;color:var(--mg)">IPI 00 000 000 250 · ISNI registering in the background...</p>
-          </div>
-        </div>
-        <div style="display:flex;gap:10px;margin-bottom:10px">
-          <button class="bo" style="font-size:10px;padding:9px 14px">← Back</button>
-          <button class="by" style="flex:1;font-size:10px">Continue →</button>
-        </div>
-        <p style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);text-align:center;text-decoration:underline;cursor:pointer">Skip for now — add later</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     SCREEN 6 — CONFIRMED
-══════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-lbl">
-    /setup/confirmed — The wow moment · 1:55 – 2:20
-    <span class="tag tag-y">Identity live</span>
-  </div>
-  <div class="browser">
-    <div class="bar">
-      <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
-      <div class="url">sophye.io/setup/confirmed</div>
-    </div>
-    <div style="background:var(--b);padding:60px 48px;display:flex;flex-direction:column;align-items:center;text-align:center">
-      <div style="width:60px;height:60px;background:var(--y);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--ff);font-weight:900;font-size:28px;color:var(--b);letter-spacing:-.04em;margin-bottom:24px">S</div>
-      <h1 style="font-family:var(--ff);font-weight:900;font-size:44px;line-height:.95;letter-spacing:-.03em;color:#fff;margin-bottom:10px">Your fingerprint<br>is live.</h1>
-      <p style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#555;margin-bottom:36px">Verified · ASCAP · IPI confirmed</p>
-      <div style="background:#111;border-radius:8px;padding:20px;width:100%;max-width:340px;text-align:left;margin-bottom:28px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-          <p style="font-family:var(--ff);font-weight:900;font-size:18px;color:#fff;letter-spacing:-.01em">Maria Santos</p>
-          <div style="display:flex;align-items:center;gap:5px">
-            <div style="width:6px;height:6px;border-radius:50%;background:var(--y)"></div>
-            <span style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--y)">Verified</span>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:14px;border-top:1px solid #1e1e1e">
-          <div><p style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444;margin-bottom:3px">PRO</p><p style="font-size:12px;font-weight:700;color:#fff">ASCAP</p></div>
-          <div><p style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444;margin-bottom:3px">IPI</p><p class="mono" style="font-size:11px;color:#fff">00 000 250</p></div>
-          <div><p style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444;margin-bottom:3px">Sophye ID</p><p class="mono" style="font-size:11px;color:var(--y)">SPH-2847-MSAN</p></div>
-          <div><p style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444;margin-bottom:3px">ISNI</p><p style="font-size:11px;color:#555">Registering...</p></div>
-        </div>
-        <div style="padding-top:14px;border-top:1px solid #1e1e1e;margin-top:14px">
-          <p style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444;margin-bottom:3px">Profile link</p>
-          <p class="mono" style="font-size:11px;color:#888">sophye.io/maria-santos</p>
-        </div>
-      </div>
-      <button class="by" style="width:100%;max-width:340px;padding:14px;font-size:11px;margin-bottom:12px">Add to Apple Wallet →</button>
-      <p style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#555;text-decoration:underline;cursor:pointer">Skip — go to dashboard</p>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     SCREEN 7 — WALLET
-══════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-lbl">
-    /setup/wallet — Add to Apple Wallet · 2:20 – 2:45
-    <span class="tag tag-b">Final step</span>
-  </div>
-  <div class="cols2">
-    <!-- Web -->
-    <div class="browser">
-      <div class="bar">
-        <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
-        <div class="url">sophye.io/setup/wallet</div>
-      </div>
-      <div style="background:var(--bg)">
-        <div class="ybar"></div>
-        <div class="snav" style="background:var(--w)">
-          <div class="wordmark" style="font-size:13px"><div class="smark" style="width:22px;height:22px;font-size:11px">S</div>Sophye</div>
-          <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Almost done</span>
-        </div>
-        <div style="padding:24px 32px">
-          <div class="prog">
-            <div class="prog-meta"><span class="prog-lbl">Step 6 of 6</span><span class="prog-lbl">Wallet</span></div>
-            <div class="prog-track"><div class="prog-fill" style="width:90%"></div></div>
-          </div>
-          <h2 style="font-family:var(--ff);font-weight:900;font-size:20px;letter-spacing:-.02em;color:var(--b);margin-bottom:6px">Add Sophye to your wallet</h2>
-          <p style="font-size:11px;color:var(--ink);margin-bottom:20px">Your creator ID lives in Apple Wallet — always in your pocket, no internet needed.</p>
-          <div style="max-width:260px;margin:0 auto 18px">
-            <div class="wcard">
-              <div class="wbar"></div>
-              <div class="whdr"><div class="wbrand"><div class="ws" style="width:18px;height:18px;font-size:9px">S</div><span style="font-size:11px;font-weight:900;color:#fff">Sophye</span></div><span class="wtype">Creator ID</span></div>
-              <div class="wname-blk"><div class="wname" style="font-size:16px">Maria Santos</div><div class="wver"><div class="wvdot"></div><span class="wvtxt">Verified · ASCAP</span></div></div>
-              <div class="wfields">
-                <div><div class="wfl">Roles</div><div class="wfv" style="font-size:9px">Songwriter</div></div>
-                <div><div class="wfl">IPI</div><div class="wfv mono" style="font-size:8px">00 000 250</div></div>
-                <div><div class="wfl">Sessions</div><div class="wfv-big" style="font-size:18px">0</div></div>
-              </div>
-            </div>
-          </div>
-          <button class="bb" style="width:100%;gap:10px;padding:13px;font-size:11px;margin-bottom:8px">
-            <div style="width:20px;height:20px;background:var(--y);border-radius:3px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;color:var(--b)">S</div>
-            Add to Apple Wallet
-          </button>
-          <p style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);text-align:center;text-decoration:underline;cursor:pointer">Skip — I'll do this later</p>
-        </div>
-      </div>
-    </div>
-    <!-- iOS system sheet -->
-    <div class="phone-scene">
-      <div>
-        <div class="phone">
-          <div class="notch"></div>
-          <div style="background:#f0f0f0">
-            <div style="background:#fff;border-radius:16px 16px 0 0;padding:16px;margin-top:40px">
-              <div style="width:36px;height:4px;background:var(--stone);border-radius:2px;margin:0 auto 14px"></div>
-              <p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg);text-align:center;margin-bottom:12px">Add to Wallet</p>
-              <div style="max-width:170px;margin:0 auto 14px">
-                <div class="wcard">
-                  <div class="wbar"></div>
-                  <div class="whdr" style="padding:8px 10px"><div class="wbrand"><div class="ws" style="width:14px;height:14px;font-size:7px">S</div><span style="font-size:9px;font-weight:900;color:#fff">Sophye</span></div></div>
-                  <div style="padding:8px 10px 10px">
-                    <div style="font-weight:900;font-size:13px;color:#fff;letter-spacing:-.01em;margin-bottom:3px">Maria Santos</div>
-                    <div style="display:flex;align-items:center;gap:3px"><div style="width:4px;height:4px;border-radius:50%;background:var(--y)"></div><span style="font-size:7px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--y)">Verified</span></div>
-                  </div>
-                </div>
-              </div>
-              <button style="width:100%;padding:11px;background:var(--y);color:var(--b);border:none;border-radius:8px;font-family:var(--ff);font-weight:900;font-size:11px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px">Add</button>
-              <button style="width:100%;padding:11px;background:var(--bg);color:var(--mg);border:none;border-radius:8px;font-family:var(--ff);font-weight:700;font-size:10px;letter-spacing:.04em;text-transform:uppercase">Cancel</button>
-            </div>
-          </div>
-        </div>
-        <p style="font-size:9px;color:#555;text-align:center;margin-top:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">iOS native system sheet</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     SCREEN 8 — DASHBOARD
-══════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-lbl">
-    /dashboard — Creator home · Done in &lt;2:45
-    <span class="tag tag-w">Dashboard</span>
-  </div>
-  <div class="browser">
-    <div class="bar">
-      <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
-      <div class="url">sophye.io/dashboard</div>
-    </div>
-    <div style="background:var(--w)">
-      <div class="ybar"></div>
-      <div class="snav">
-        <div class="wordmark" style="font-size:14px"><div class="smark" style="width:26px;height:26px;font-size:13px">S</div>Sophye</div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <div class="bdg bdg-b"><div class="dot5" style="background:var(--y)"></div>Verified · ASCAP</div>
-          <div style="width:30px;height:30px;border-radius:50%;background:var(--b);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;color:var(--y)">MS</div>
-        </div>
-      </div>
-      <div style="padding:32px 40px">
-        <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:6px">Your fingerprint</p>
-        <h1 style="font-family:var(--ff);font-weight:900;font-size:34px;letter-spacing:-.03em;color:var(--b);margin-bottom:4px">Maria Santos</h1>
-        <p class="mono" style="font-size:12px;color:var(--mg);margin-bottom:24px">SPH-2847-MSAN</p>
-        <div class="cols3" style="margin-bottom:28px">
-          <div class="stat-box"><p style="font-family:var(--ff);font-weight:900;font-size:38px;letter-spacing:-.03em;color:var(--b);line-height:1;margin-bottom:4px">47</p><p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Sessions</p></div>
-          <div class="stat-box"><p style="font-family:var(--ff);font-weight:900;font-size:38px;letter-spacing:-.03em;color:var(--b);line-height:1;margin-bottom:4px">23</p><p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Credits</p></div>
-          <div class="stat-box"><p style="font-family:var(--ff);font-weight:900;font-size:38px;letter-spacing:-.03em;color:var(--b);line-height:1;margin-bottom:4px">12</p><p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Collaborators</p></div>
-        </div>
-        <div class="div-b"></div>
-        <div class="cols2" style="margin-top:24px;gap:40px">
-          <!-- Next actions -->
-          <div>
-            <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:16px">Start here</p>
-            <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--stone)">
-              <span style="font-weight:900;font-size:10px;color:var(--stone);flex-shrink:0;margin-top:2px;letter-spacing:.05em">01</span>
-              <div><p style="font-size:12px;font-weight:700;color:var(--b);margin-bottom:2px">Share your profile link</p><p style="font-size:11px;color:var(--mg);margin-bottom:5px">Send it to a collaborator, label, or publisher.</p><span style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:underline;color:var(--b)">Copy link</span></div>
-            </div>
-            <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--stone)">
-              <span style="font-weight:900;font-size:10px;color:var(--stone);flex-shrink:0;margin-top:2px;letter-spacing:.05em">02</span>
-              <div><p style="font-size:12px;font-weight:700;color:var(--b);margin-bottom:2px">Invite a collaborator</p><p style="font-size:11px;color:var(--mg);margin-bottom:5px">Start tracking who made what.</p><span style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:underline;color:var(--b)">New session →</span></div>
-            </div>
-            <div style="display:flex;gap:12px;padding:12px 0">
-              <span style="font-weight:900;font-size:10px;color:var(--stone);flex-shrink:0;margin-top:2px;letter-spacing:.05em">03</span>
-              <div><p style="font-size:12px;font-weight:700;color:var(--b);margin-bottom:2px">Install the DAW plugin</p><p style="font-size:11px;color:var(--mg);margin-bottom:5px">Pro Tools, FL Studio, Ableton, Logic.</p><span style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:underline;color:var(--b)">Get plugin →</span></div>
-            </div>
-          </div>
-          <!-- Sessions -->
-          <div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:16px">
-              <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg)">Recent sessions</p>
-              <span style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:underline;color:var(--mg)">View all</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--stone)">
-              <div><p style="font-size:12px;font-weight:700;color:var(--b)">Golden Hour</p><p style="font-size:10px;color:var(--mg)">2 contributors · Yesterday</p></div>
-              <span class="st-conf">confirmed</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--stone)">
-              <div><p style="font-size:12px;font-weight:700;color:var(--b)">Midnight Run</p><p style="font-size:10px;color:var(--mg)">2 contributors · 4 days ago</p></div>
-              <span class="st-reg">registered</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
-              <div><p style="font-size:12px;font-weight:700;color:var(--b)">Unnamed track</p><p style="font-size:10px;color:var(--mg)">1 contributor · Today</p></div>
-              <span class="st-draft">draft</span>
-            </div>
-            <button class="bo" style="width:100%;margin-top:10px;font-size:10px">+ Start new session</button>
-          </div>
-        </div>
-        <!-- Profile link banner -->
-        <div class="mcard-dark" style="margin-top:24px;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:16px">
-          <div>
-            <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#555;margin-bottom:4px">Your public profile</p>
-            <p class="mono" style="font-size:13px;color:#fff">sophye.io/maria-santos</p>
-          </div>
-          <div style="display:flex;gap:8px">
-            <button class="by" style="font-size:10px;padding:8px 14px">Copy link</button>
-            <button style="padding:8px 14px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:4px;font-family:var(--ff);font-weight:700;font-size:10px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer">View profile →</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     SCREEN 9 — PUBLIC PROFILE
-══════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-lbl">
-    /profile/maria-santos — Public creator profile
-    <span class="tag tag-y">Public</span>
-  </div>
-  <div class="browser">
-    <div class="bar">
-      <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
-      <div class="url">sophye.io/profile/maria-santos</div>
-    </div>
-    <div style="background:var(--w)">
-      <div class="ybar"></div>
-      <div class="snav">
-        <div class="wordmark" style="font-size:14px"><div class="smark" style="width:26px;height:26px;font-size:13px">S</div>Sophye</div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Public profile</span>
-          <button class="by" style="font-size:10px;padding:8px 12px">Create yours →</button>
-        </div>
-      </div>
-      <div style="padding:32px 40px;display:grid;grid-template-columns:1fr 270px;gap:40px">
-        <!-- Left -->
+      <p class="slabel" style="margin-bottom:8px">Your identity</p>
+      <h2 style="font-size:26px;font-weight:900;letter-spacing:-.02em;margin-bottom:8px">What's your name?</h2>
+      <p style="font-size:13px;color:var(--ink);margin-bottom:24px">Your legal name is used for royalties. Your stage name is what collaborators see.</p>
+      <div class="form-gap">
         <div>
-          <div style="display:flex;gap:14px;margin-bottom:20px;align-items:flex-start">
-            <div style="width:52px;height:52px;border-radius:50%;background:var(--b);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:var(--y);flex-shrink:0">MS</div>
+          <label class="slabel">Legal name</label>
+          <input class="sinput" id="legal-name" placeholder="Maria Santos" value="">
+          <p class="shint">Used for PRO registration and split sheets</p>
+        </div>
+        <div>
+          <label class="slabel">Stage name <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <input class="sinput" id="stage-name" placeholder="MARA">
+          <p class="shint">What collaborators and studios will see</p>
+        </div>
+        <div class="row">
+          <button class="btn btn-o" onclick="go('join')">← Back</button>
+          <button class="btn btn-y" style="flex:1" onclick="handleName()">Continue →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SCREEN: SETUP — ROLES
+═══════════════════════════════════════════════════ -->
+<div id="screen-setup-roles" class="screen">
+  <div class="ybar"></div>
+  <nav class="snav">
+    <div class="wordmark" onclick="go('landing')"><div class="smark">S</div>Sophye</div>
+    <span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Setup</span>
+  </nav>
+  <div style="flex:1;padding:48px 24px">
+    <div style="max-width:560px;margin:0 auto">
+      <div class="prog-wrap">
+        <div class="prog-meta"><span class="prog-lbl">Step 3 of 6</span><span class="prog-lbl">Roles</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:50%"></div></div>
+      </div>
+      <p class="slabel" style="margin-bottom:8px">Your roles</p>
+      <h2 style="font-size:26px;font-weight:900;letter-spacing:-.02em;margin-bottom:8px">What do you create?</h2>
+      <p style="font-size:13px;color:var(--ink);margin-bottom:20px">Select all that apply. These become your default roles on every session.</p>
+
+      <div id="role-grid" style="margin-bottom:20px">
+        <span class="role-tag" onclick="toggleRole(this)">Songwriter</span>
+        <span class="role-tag" onclick="toggleRole(this)">Producer</span>
+        <span class="role-tag" onclick="toggleRole(this)">Topliner</span>
+        <span class="role-tag" onclick="toggleRole(this)">Beatmaker</span>
+        <span class="role-tag" onclick="toggleRole(this)">Lead Vocalist</span>
+        <span class="role-tag" onclick="toggleRole(this)">Featured Artist</span>
+        <span class="role-tag" onclick="toggleRole(this)">Session Musician</span>
+        <span class="role-tag" onclick="toggleRole(this)">Mix Engineer</span>
+        <span class="role-tag" onclick="toggleRole(this)">Mastering Engineer</span>
+        <span class="role-tag" onclick="toggleRole(this)">Composer</span>
+        <span class="role-tag" onclick="toggleRole(this)">Lyricist</span>
+        <span class="role-tag" onclick="toggleRole(this)">Arranger</span>
+        <span class="role-tag" onclick="toggleRole(this)">A&R</span>
+      </div>
+
+      <div id="role-count" style="display:flex;align-items:center;gap:8px;padding:12px 0;border-top:1px solid var(--stone);border-bottom:1px solid var(--stone);margin-bottom:20px">
+        <span style="font-size:13px;color:var(--mg)">Select at least one role to continue</span>
+      </div>
+
+      <div class="row">
+        <button class="btn btn-o" onclick="go('setup-name')">← Back</button>
+        <button class="btn btn-y" id="roles-continue" style="flex:1;opacity:.4;pointer-events:none" onclick="go('setup-pro')">Continue →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SCREEN: SETUP — PRO + IPI
+═══════════════════════════════════════════════════ -->
+<div id="screen-setup-pro" class="screen">
+  <div class="ybar"></div>
+  <nav class="snav">
+    <div class="wordmark" onclick="go('landing')"><div class="smark">S</div>Sophye</div>
+    <span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Setup</span>
+  </nav>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:48px 24px">
+    <div class="center-col">
+      <div class="prog-wrap">
+        <div class="prog-meta"><span class="prog-lbl">Step 4 of 6</span><span class="prog-lbl">PRO</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:66%"></div></div>
+      </div>
+      <p class="slabel" style="margin-bottom:8px">Your rights org</p>
+      <h2 style="font-size:26px;font-weight:900;letter-spacing:-.02em;margin-bottom:8px">Your performing rights org</h2>
+      <p style="font-size:13px;color:var(--ink);margin-bottom:24px">This is what makes your identity verifiable. Your IPI links you to royalties worldwide.</p>
+
+      <div class="form-gap">
+        <div>
+          <label class="slabel">Which PRO are you with?</label>
+          <div id="pro-grid">
+            <span class="pro-tag" onclick="selectPRO(this)">ASCAP</span>
+            <span class="pro-tag" onclick="selectPRO(this)">BMI</span>
+            <span class="pro-tag" onclick="selectPRO(this)">SESAC</span>
+            <span class="pro-tag" onclick="selectPRO(this)">PRS</span>
+            <span class="pro-tag" onclick="selectPRO(this)">SOCAN</span>
+            <span class="pro-tag" onclick="selectPRO(this)">GEMA</span>
+            <span class="pro-tag" onclick="selectPRO(this)">APRA</span>
+            <span class="pro-tag" onclick="selectPRO(this)">Other</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="slabel">IPI / CAE number</label>
+          <div class="row">
+            <input class="sinput mono" id="ipi-input" placeholder="00 000 000 250" style="flex:1">
+            <button class="btn btn-b btn-sm" onclick="handleIPILookup()" style="flex-shrink:0;height:44px" id="lookup-btn">Look up →</button>
+          </div>
+          <p class="shint">Find this in your PRO member portal under your profile</p>
+        </div>
+
+        <div id="ipi-result" style="display:none">
+          <div class="tick-row">
+            <div class="tick">
+              <svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="#0A0A0A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
             <div>
-              <h1 style="font-family:var(--ff);font-weight:900;font-size:26px;letter-spacing:-.02em;color:var(--b);line-height:1;margin-bottom:4px">Maria Santos</h1>
-              <p style="font-size:11px;color:var(--mg);margin-bottom:6px">Also known as MARA</p>
-              <div style="display:flex;gap:6px;flex-wrap:wrap">
-                <div class="bdg bdg-y"><div class="dot5" style="background:var(--b)"></div>Verified · ASCAP</div>
-                <div class="bdg bdg-o">Santos Music Publishing</div>
-              </div>
-            </div>
-          </div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:20px">
-            <span style="background:var(--bg);border:1px solid var(--stone);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 9px;border-radius:4px;color:var(--ink)">Songwriter</span>
-            <span style="background:var(--bg);border:1px solid var(--stone);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 9px;border-radius:4px;color:var(--ink)">Producer</span>
-            <span style="background:var(--bg);border:1px solid var(--stone);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 9px;border-radius:4px;color:var(--ink)">Lead Vocalist</span>
-          </div>
-          <!-- Identity card -->
-          <div class="mcard" style="margin-bottom:20px">
-            <div style="padding:12px 16px;border-bottom:1px solid var(--stone)"><p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg)">Verified identity</p></div>
-            <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--stone)"><span style="font-size:11px;color:var(--mg)">PRO</span><span style="font-size:12px;font-weight:700;color:var(--b)">ASCAP</span></div>
-            <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--stone)"><span style="font-size:11px;color:var(--mg)">IPI number</span><span class="mono" style="font-size:11px;font-weight:700;color:var(--b)">00 000 000 250</span></div>
-            <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--stone)"><span style="font-size:11px;color:var(--mg)">ISNI</span><span class="mono" style="font-size:11px;font-weight:700;color:var(--b)">0000 0001 2345</span></div>
-            <div style="display:flex;justify-content:space-between;padding:10px 16px"><span style="font-size:11px;color:var(--mg)">Sophye ID</span><span class="mono" style="font-size:11px;font-weight:700;color:var(--b)">SPH-2847-MSAN</span></div>
-          </div>
-          <!-- Stats -->
-          <div class="cols3" style="margin-bottom:20px">
-            <div class="stat-box"><p style="font-weight:900;font-size:28px;letter-spacing:-.03em;color:var(--b);line-height:1;margin-bottom:3px">47</p><p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Sessions</p></div>
-            <div class="stat-box"><p style="font-weight:900;font-size:28px;letter-spacing:-.03em;color:var(--b);line-height:1;margin-bottom:3px">23</p><p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Releases</p></div>
-            <div class="stat-box"><p style="font-weight:900;font-size:28px;letter-spacing:-.03em;color:var(--b);line-height:1;margin-bottom:3px">12</p><p style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Collabs</p></div>
-          </div>
-          <!-- Sessions -->
-          <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:12px">Confirmed sessions</p>
-          <div class="mcard" style="overflow:hidden">
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--stone)">
-              <div><p style="font-size:12px;font-weight:700;color:var(--b)">Golden Hour</p><p style="font-size:10px;color:var(--mg)">Maria Santos, Jordan Blake</p></div>
-              <div style="display:flex;align-items:center;gap:8px"><span class="mono" style="font-size:9px;color:var(--mg)">USRC12345001</span><span class="st-conf">confirmed</span></div>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
-              <div><p style="font-size:12px;font-weight:700;color:var(--b)">Midnight Run</p><p style="font-size:10px;color:var(--mg)">Maria Santos, Sam Rivera</p></div>
-              <div style="display:flex;align-items:center;gap:8px"><span class="mono" style="font-size:9px;color:var(--mg)">USRC12345002</span><span class="st-reg">registered</span></div>
+              <p id="ipi-name" style="font-size:13px;font-weight:700;color:var(--b)">Confirmed</p>
+              <p style="font-size:11px;color:var(--mg)">ISNI registering in the background...</p>
             </div>
           </div>
         </div>
-        <!-- Right: wallet card sticky -->
-        <div>
-          <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mg);margin-bottom:12px">Creator ID</p>
-          <div class="wcard" style="margin-bottom:10px">
-            <div class="wbar"></div>
-            <div class="whdr"><div class="wbrand"><div class="ws" style="width:18px;height:18px;font-size:9px">S</div><span style="font-size:11px;font-weight:900;color:#fff">Sophye</span></div><span class="wtype">Creator ID</span></div>
-            <div class="wname-blk"><div class="wname" style="font-size:18px">Maria Santos</div><div class="wver"><div class="wvdot"></div><span class="wvtxt">Verified · ASCAP</span></div></div>
-            <div class="wfields">
-              <div><div class="wfl">Roles</div><div class="wfv" style="font-size:10px">Songwriter</div><div style="font-size:9px;color:#666;font-weight:500;margin-top:2px">Producer</div></div>
-              <div><div class="wfl">IPI</div><div class="wfv mono" style="font-size:9px">00 000 250</div></div>
-              <div><div class="wfl">Sessions</div><div class="wfv-big" style="font-size:24px">47</div></div>
-            </div>
-            <div class="wqr">
-              <div class="wqr-box" style="width:40px;height:40px">
-                <svg viewBox="0 0 36 36" style="width:100%;height:100%"><rect x="1" y="1" width="12" height="12" rx="2" fill="#0A0A0A"/><rect x="3" y="3" width="8" height="8" rx="1" fill="#fff"/><rect x="4" y="4" width="6" height="6" fill="#0A0A0A"/><rect x="21" y="1" width="12" height="12" rx="2" fill="#0A0A0A"/><rect x="23" y="3" width="8" height="8" rx="1" fill="#fff"/><rect x="24" y="4" width="6" height="6" fill="#0A0A0A"/><rect x="1" y="21" width="12" height="12" rx="2" fill="#0A0A0A"/><rect x="3" y="23" width="8" height="8" rx="1" fill="#fff"/><rect x="4" y="24" width="6" height="6" fill="#0A0A0A"/><rect x="15" y="15" width="4" height="4" fill="#E8F000"/></svg>
-              </div>
-              <div><div class="wid" style="font-size:11px">SPH-2847-MSAN</div><div class="wsub">Scan to verify · sophye.io</div></div>
-            </div>
-          </div>
-          <button class="bb" style="width:100%;gap:8px;padding:11px;font-size:10px;margin-bottom:6px">
-            <div style="width:16px;height:16px;background:var(--y);border-radius:3px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:8px;color:var(--b)">S</div>
-            Verify this identity
-          </button>
-          <button class="by" style="width:100%;padding:11px;font-size:10px">Create your fingerprint →</button>
+
+        <div class="row">
+          <button class="btn btn-o" onclick="go('setup-roles')">← Back</button>
+          <button class="btn btn-y" id="pro-continue" style="flex:1;opacity:.4;pointer-events:none" onclick="handleProContinue()">Continue →</button>
         </div>
+        <button class="btn-ghost" style="display:block;width:100%;text-align:center" onclick="handleProSkip()">Skip for now — add later</button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════
+     SCREEN: SETUP — CONFIRMED (black screen)
+═══════════════════════════════════════════════════ -->
+<div id="screen-confirmed" class="screen">
+  <div style="height:3px;background:var(--b)"></div>
+  <nav class="snav">
+    <div class="wordmark" onclick="go('landing')"><div class="smark" style="background:var(--y);color:var(--b)">S</div><span style="color:#fff">Sophye</span></div>
+    <span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#555">Identity created</span>
+  </nav>
+  <div class="confirmed-inner">
+    <div class="smark smark-xl" style="background:var(--y);color:var(--b);margin-bottom:24px">S</div>
+    <h1 style="font-size:clamp(34px,5vw,48px);font-weight:900;line-height:.95;letter-spacing:-.03em;color:#fff;margin-bottom:10px">Your fingerprint<br>is live.</h1>
+    <p style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#555;margin-bottom:32px" id="confirmed-sub">Identity created</p>
+
+    <div class="id-card" style="margin-bottom:24px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <p style="font-size:18px;font-weight:900;color:#fff;letter-spacing:-.01em" id="confirmed-name">Your Name</p>
+        <div class="bdg bdg-b"><div class="bdg-dot" style="background:var(--y)"></div>Verified</div>
+      </div>
+      <div class="id-grid">
+        <div><div class="id-fl">PRO</div><div class="id-fv" id="confirmed-pro">—</div></div>
+        <div><div class="id-fl">IPI</div><div class="id-fv mono" id="confirmed-ipi">—</div></div>
+        <div><div class="id-fl">Sophye ID</div><div class="id-fv yellow" id="confirmed-id">SPH-XXXX</div></div>
+        <div><div class="id-fl">ISNI</div><div class="id-fv" style="color:#555;font-size:11px">Registering...</div></div>
+      </div>
+      <div style="padding-top:12px;border-top:1px solid #1e1e1e;margin-top:12px">
+        <div class="id-fl">Profile link</div>
+        <div class="id-fv mono" id="confirmed-url" style="color:#888;font-size:11px">sophye.io/your-name</div>
+      </div>
+    </div>
+
+    <button class="btn btn-y" style="width:100%;max-width:340px;padding:14px;font-size:12px;margin-bottom:12px" onclick="go('setup-wallet')">Add to Apple Wallet →</button>
+    <button class="btn-ghost" onclick="go('dashboard')">Skip — go to dashboard</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SCREEN: SETUP — WALLET
+═══════════════════════════════════════════════════ -->
+<div id="screen-setup-wallet" class="screen">
+  <div class="ybar"></div>
+  <nav class="snav">
+    <div class="wordmark" onclick="go('landing')"><div class="smark">S</div>Sophye</div>
+    <span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Almost done</span>
+  </nav>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:48px 24px;background:var(--bg)">
+    <div class="center-col">
+      <div class="prog-wrap">
+        <div class="prog-meta"><span class="prog-lbl">Step 6 of 6</span><span class="prog-lbl">Wallet</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:92%"></div></div>
+      </div>
+      <h2 style="font-size:24px;font-weight:900;letter-spacing:-.02em;margin-bottom:8px">Add Sophye to your wallet</h2>
+      <p style="font-size:13px;color:var(--ink);margin-bottom:20px">Your creator ID lives in Apple Wallet — always in your pocket, no internet needed.</p>
+
+      <div style="margin-bottom:20px" id="wallet-card-preview"></div>
+
+      <div style="border:1.5px solid var(--b);border-radius:var(--rc);padding:16px;margin-bottom:20px">
+        <p class="slabel" style="margin-bottom:10px">What's on the card</p>
+        <div id="wallet-fields"></div>
+      </div>
+
+      <div class="form-gap">
+        <button class="btn btn-b btn-full" style="padding:14px;font-size:12px;gap:10px" id="wallet-btn" onclick="handleAddWallet()">
+          <div style="width:20px;height:20px;background:var(--y);border-radius:3px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;color:var(--b)">S</div>
+          Add to Apple Wallet
+        </button>
+        <button class="btn-ghost" style="display:block;width:100%;text-align:center" onclick="go('dashboard')">Skip — I'll do this later</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SCREEN: DASHBOARD
+═══════════════════════════════════════════════════ -->
+<div id="screen-dashboard" class="screen">
+  <div class="ybar"></div>
+  <nav class="snav">
+    <div class="wordmark" onclick="go('landing')"><div class="smark">S</div>Sophye</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div id="dash-badge" class="bdg bdg-b" style="display:none"><div class="bdg-dot" style="background:var(--y)"></div><span id="dash-badge-txt">Verified</span></div>
+      <div id="dash-avatar" onclick="go('profile')" style="width:32px;height:32px;border-radius:50%;background:var(--b);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:var(--y);cursor:pointer">MS</div>
+    </div>
+  </nav>
+  <div style="flex:1;padding:32px 24px">
+    <div class="page-inner">
+      <p class="slabel" style="margin-bottom:6px">Your fingerprint</p>
+      <h1 id="dash-name" style="font-size:clamp(28px,4vw,40px);font-weight:900;letter-spacing:-.025em;color:var(--b);margin-bottom:4px">Maria Santos</h1>
+      <p id="dash-id" class="mono" style="font-size:13px;color:var(--mg);margin-bottom:28px">SPH-2847-MSAN</p>
+
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-n" id="stat-sessions">47</div><div class="stat-l">Sessions</div></div>
+        <div class="stat-box"><div class="stat-n" id="stat-credits">23</div><div class="stat-l">Credits</div></div>
+        <div class="stat-box"><div class="stat-n" id="stat-collabs">12</div><div class="stat-l">Collaborators</div></div>
+      </div>
+
+      <div class="div-b"></div>
+
+      <div class="col2" style="margin-top:0">
+        <div>
+          <p class="slabel" style="margin-bottom:16px">Start here</p>
+          <div>
+            <div class="next-action">
+              <span class="na-num">01</span>
+              <div><div class="na-title">Share your profile link</div><div class="na-desc">Send it to a collaborator, label, or publisher.</div><button class="na-link" onclick="handleCopy()">Copy link</button></div>
+            </div>
+            <div class="next-action">
+              <span class="na-num">02</span>
+              <div><div class="na-title">Invite a collaborator to a session</div><div class="na-desc">Start tracking who made what.</div><button class="na-link" onclick="toast('Session flow coming soon')">New session →</button></div>
+            </div>
+            <div class="next-action">
+              <span class="na-num">03</span>
+              <div><div class="na-title">Install the DAW plugin</div><div class="na-desc">Pro Tools, FL Studio, Ableton, Logic — all covered.</div><button class="na-link" onclick="toast('Plugin download coming soon')">Get plugin →</button></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <p class="slabel">Recent sessions</p>
+            <button class="na-link" onclick="toast('Full sessions list coming soon')">View all</button>
+          </div>
+          <div>
+            <div class="session-row"><div><p style="font-size:13px;font-weight:700">Golden Hour</p><p style="font-size:11px;color:var(--mg)">2 contributors · Yesterday</p></div><span class="st-conf">confirmed</span></div>
+            <div class="session-row"><div><p style="font-size:13px;font-weight:700">Midnight Run</p><p style="font-size:11px;color:var(--mg)">2 contributors · 4 days ago</p></div><span class="st-reg">registered</span></div>
+            <div class="session-row"><div><p style="font-size:13px;font-weight:700">Unnamed track</p><p style="font-size:11px;color:var(--mg)">1 contributor · Today</p></div><span class="st-draft">draft</span></div>
+          </div>
+          <button class="btn btn-o btn-full" style="margin-top:12px;font-size:11px" onclick="toast('New session flow coming soon')">+ Start new session</button>
+        </div>
+      </div>
+
+      <div class="div-b"></div>
+
+      <div class="card-dark profile-banner">
+        <div>
+          <p style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#555;margin-bottom:5px">Your public profile</p>
+          <p id="dash-profile-url" class="mono" style="font-size:14px;color:#fff">sophye.io/maria-santos</p>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-y btn-sm" onclick="handleCopy()">Copy link</button>
+          <button class="btn" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.2);padding:8px 14px;font-size:10px" onclick="go('profile')">View profile →</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SCREEN: PUBLIC PROFILE
+═══════════════════════════════════════════════════ -->
+<div id="screen-profile" class="screen">
+  <div class="ybar"></div>
+  <nav class="snav">
+    <div class="wordmark" onclick="go('landing')"><div class="smark">S</div>Sophye</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mg)">Public profile</span>
+      <button class="btn btn-y btn-sm" onclick="go('join')">Create yours →</button>
+    </div>
+  </nav>
+
+  <div class="profile-layout page-inner">
+    <div>
+      <div class="profile-hdr">
+        <div class="avatar" id="profile-avatar">MS</div>
+        <div>
+          <h1 id="profile-name" style="font-size:clamp(22px,3vw,30px);font-weight:900;letter-spacing:-.02em;line-height:1;margin-bottom:5px">Maria Santos</h1>
+          <p id="profile-aka" style="font-size:12px;color:var(--mg);margin-bottom:8px">Also known as MARA</p>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <div class="bdg bdg-y" id="profile-pro-badge"><div class="bdg-dot" style="background:var(--b)"></div>Verified · ASCAP</div>
+            <div class="bdg bdg-o">Santos Music Publishing</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="profile-roles" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px"></div>
+
+      <div class="card" style="margin-bottom:22px;overflow:hidden">
+        <div style="padding:12px 16px;border-bottom:1px solid var(--stone)"><p class="slabel">Verified identity</p></div>
+        <div id="profile-id-table"></div>
+      </div>
+
+      <div class="stat-grid" style="margin-bottom:22px">
+        <div class="stat-box"><div class="stat-n">47</div><div class="stat-l">Sessions</div></div>
+        <div class="stat-box"><div class="stat-n">23</div><div class="stat-l">Releases</div></div>
+        <div class="stat-box"><div class="stat-n">12</div><div class="stat-l">Collabs</div></div>
+      </div>
+
+      <p class="slabel" style="margin-bottom:12px">Confirmed sessions</p>
+      <div class="card" style="overflow:hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--stone)">
+          <div><p style="font-size:13px;font-weight:700">Golden Hour</p><p style="font-size:11px;color:var(--mg)">Maria Santos, Jordan Blake</p></div>
+          <div style="display:flex;align-items:center;gap:8px"><span class="mono" style="font-size:9px;color:var(--mg)">USRC12345001</span><span class="st-conf">confirmed</span></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px">
+          <div><p style="font-size:13px;font-weight:700">Midnight Run</p><p style="font-size:11px;color:var(--mg)">Maria Santos, Sam Rivera</p></div>
+          <div style="display:flex;align-items:center;gap:8px"><span class="mono" style="font-size:9px;color:var(--mg)">USRC12345002</span><span class="st-reg">registered</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-wallet">
+      <p class="slabel" style="margin-bottom:12px">Creator ID</p>
+      <div id="profile-wallet-card" style="margin-bottom:12px"></div>
+      <button class="btn btn-b btn-full" style="padding:12px;font-size:11px;gap:8px;margin-bottom:8px" onclick="toast('Identity verified ✓')">
+        <div style="width:16px;height:16px;background:var(--y);border-radius:3px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:8px;color:var(--b)">S</div>
+        Verify this identity
+      </button>
+      <button class="btn btn-y btn-full" style="padding:12px;font-size:11px" onclick="go('join')">Create your fingerprint →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+/* ── STATE ──────────────────────────────────────────────── */
+const state = {
+  legalName: '',
+  stageName: '',
+  roles: [],
+  pro: '',
+  ipi: '',
+  sophyeId: '',
+  handle: '',
+  ipiVerified: false,
+}
+
+/* ── NAVIGATION ─────────────────────────────────────────── */
+function go(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
+  const el = document.getElementById('screen-' + screenId)
+  if (el) {
+    el.classList.add('active')
+    window.scrollTo(0, 0)
+  }
+  // Update dynamic content when entering specific screens
+  if (screenId === 'confirmed') renderConfirmed()
+  if (screenId === 'setup-wallet') renderWalletPreview()
+  if (screenId === 'dashboard') renderDashboard()
+  if (screenId === 'profile') renderProfile()
+}
+
+/* ── HELPERS ────────────────────────────────────────────── */
+function generateSophyeId(name) {
+  const initials = name.split(' ').map(w => w[0] || '').join('').toUpperCase().slice(0, 4).padEnd(4, 'X')
+  const num = Math.floor(1000 + Math.random() * 9000)
+  return `SPH-${num}-${initials}`
+}
+function toHandle(name) {
+  return name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim()
+}
+
+/* ── HANDLERS ───────────────────────────────────────────── */
+function handleMagicLink() {
+  const email = document.getElementById('join-email').value.trim()
+  if (!email || !email.includes('@')) {
+    toast('Please enter a valid email address')
+    return
+  }
+  go('setup-name')
+}
+
+function handleName() {
+  const legal = document.getElementById('legal-name').value.trim()
+  if (!legal || legal.length < 2) {
+    toast('Please enter your legal name')
+    return
+  }
+  state.legalName = legal
+  state.stageName = document.getElementById('stage-name').value.trim()
+  state.sophyeId = generateSophyeId(legal)
+  state.handle = toHandle(legal)
+  go('setup-roles')
+}
+
+function toggleRole(el) {
+  el.classList.toggle('sel')
+  updateRoleCount()
+}
+
+function updateRoleCount() {
+  const selected = document.querySelectorAll('#role-grid .role-tag.sel')
+  state.roles = Array.from(selected).map(el => el.textContent)
+  const count = selected.length
+  const countEl = document.getElementById('role-count')
+  const continueBtn = document.getElementById('roles-continue')
+  if (count > 0) {
+    countEl.innerHTML = `
+      <div style="width:18px;height:18px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.2 5.7L8 1" stroke="#0A0A0A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span style="font-size:13px;font-weight:600;color:var(--b)">${count} role${count !== 1 ? 's' : ''} selected · you can change these anytime</span>
+    `
+    continueBtn.style.opacity = '1'
+    continueBtn.style.pointerEvents = 'auto'
+  } else {
+    countEl.innerHTML = `<span style="font-size:13px;color:var(--mg)">Select at least one role to continue</span>`
+    continueBtn.style.opacity = '0.4'
+    continueBtn.style.pointerEvents = 'none'
+  }
+}
+
+function selectPRO(el) {
+  document.querySelectorAll('.pro-tag').forEach(t => t.classList.remove('sel'))
+  el.classList.add('sel')
+  state.pro = el.textContent
+  checkProContinue()
+}
+
+function checkProContinue() {
+  const btn = document.getElementById('pro-continue')
+  if (state.pro) {
+    btn.style.opacity = '1'
+    btn.style.pointerEvents = 'auto'
+  }
+}
+
+function handleIPILookup() {
+  const ipi = document.getElementById('ipi-input').value.trim()
+  if (!ipi) { toast('Enter your IPI number first'); return }
+  const btn = document.getElementById('lookup-btn')
+  btn.textContent = '...'
+  btn.disabled = true
+  setTimeout(() => {
+    btn.textContent = '✓ Found'
+    btn.disabled = false
+    btn.style.background = '#005500'
+    state.ipi = ipi
+    state.ipiVerified = true
+    const result = document.getElementById('ipi-result')
+    result.style.display = 'block'
+    document.getElementById('ipi-name').textContent = `${state.legalName || 'Creator'} · ${state.pro || 'PRO'} confirmed`
+    checkProContinue()
+  }, 1200)
+}
+
+function handleProContinue() {
+  if (!state.pro) { toast('Select your PRO first'); return }
+  go('confirmed')
+}
+
+function handleProSkip() {
+  go('confirmed')
+}
+
+function renderConfirmed() {
+  const name = state.legalName || 'Your Name'
+  document.getElementById('confirmed-name').textContent = name
+  document.getElementById('confirmed-pro').textContent = state.pro || '—'
+  document.getElementById('confirmed-ipi').textContent = state.ipi || '—'
+  document.getElementById('confirmed-id').textContent = state.sophyeId || 'SPH-XXXX'
+  document.getElementById('confirmed-url').textContent = `sophye.io/${state.handle || 'your-name'}`
+  document.getElementById('confirmed-sub').textContent = state.ipi
+    ? `Verified · ${state.pro} · IPI confirmed`
+    : state.pro ? `Verified · ${state.pro}` : 'Identity created'
+}
+
+function buildWalletCard(opts = {}) {
+  const name = opts.name || state.legalName || 'Your Name'
+  const pro = opts.pro || state.pro || '—'
+  const ipi = opts.ipi || state.ipi || '—'
+  const sophyeId = opts.sophyeId || state.sophyeId || 'SPH-XXXX-XXXX'
+  const sessions = opts.sessions !== undefined ? opts.sessions : 0
+  const roles = opts.roles || state.roles
+  const r1 = roles[0] || 'Creator'
+  const r2 = roles[1] || ''
+  return `
+    <div class="wcard">
+      <div class="wbar"></div>
+      <div class="whdr">
+        <div class="wbrand"><div class="ws">S</div><span style="font-size:12px;font-weight:900;color:#fff">Sophye</span></div>
+        <span style="font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#555">Creator ID</span>
+      </div>
+      <div class="wname-blk">
+        <div class="wname" style="font-size:20px">${name}</div>
+        ${pro !== '—' ? `<div class="wver"><div class="wvdot"></div><span class="wvtxt">Verified · ${pro}</span></div>` : ''}
+      </div>
+      <div class="wfields">
+        <div><div class="wfl">Roles</div><div class="wfv" style="font-size:11px">${r1}</div>${r2 ? `<div style="font-size:10px;color:#666;margin-top:2px">${r2}</div>` : ''}</div>
+        <div><div class="wfl">IPI</div><div class="wfv mono" style="font-size:10px">${ipi !== '—' ? ipi.slice(0,9) : '—'}</div></div>
+        <div><div class="wfl">Sessions</div><div class="wfvb" style="font-size:28px">${sessions}</div></div>
+      </div>
+      <div class="wqr">
+        <div class="wqr-box" style="width:46px;height:46px">
+          <svg viewBox="0 0 36 36" style="width:100%;height:100%">
+            <rect x="1" y="1" width="12" height="12" rx="2" fill="#0A0A0A"/><rect x="3" y="3" width="8" height="8" rx="1" fill="#fff"/><rect x="4" y="4" width="6" height="6" fill="#0A0A0A"/>
+            <rect x="21" y="1" width="12" height="12" rx="2" fill="#0A0A0A"/><rect x="23" y="3" width="8" height="8" rx="1" fill="#fff"/><rect x="24" y="4" width="6" height="6" fill="#0A0A0A"/>
+            <rect x="1" y="21" width="12" height="12" rx="2" fill="#0A0A0A"/><rect x="3" y="23" width="8" height="8" rx="1" fill="#fff"/><rect x="4" y="24" width="6" height="6" fill="#0A0A0A"/>
+            <rect x="15" y="15" width="4" height="4" fill="#E8F000"/>
+            <rect x="21" y="15" width="3" height="3" fill="#0A0A0A"/><rect x="26" y="15" width="3" height="3" fill="#0A0A0A"/>
+            <rect x="15" y="21" width="3" height="3" fill="#0A0A0A"/><rect x="21" y="21" width="3" height="3" fill="#E8F000"/>
+            <rect x="15" y="26" width="3" height="3" fill="#0A0A0A"/>
+          </svg>
+        </div>
+        <div><div class="wid" style="font-size:13px">${sophyeId}</div><div class="wsub">Scan to verify · sophye.io</div></div>
+      </div>
+    </div>`
+}
+
+function renderWalletPreview() {
+  document.getElementById('wallet-card-preview').innerHTML = buildWalletCard()
+  const fields = [
+    ['Your name', state.legalName || '—'],
+    ['PRO', state.pro || 'Not set'],
+    ['IPI', state.ipi || 'Not set'],
+    ['Sophye ID', state.sophyeId || '—'],
+    ['QR code', 'Links to your verified profile'],
+  ]
+  document.getElementById('wallet-fields').innerHTML = fields.map(([l, v]) => `
+    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--stone)">
+      <span style="font-size:12px;color:var(--mg)">${l}</span>
+      <span style="font-size:12px;font-weight:700;color:var(--b)">${v}</span>
+    </div>`).join('') + '<div style="height:1px"></div>'
+}
+
+function handleAddWallet() {
+  const btn = document.getElementById('wallet-btn')
+  btn.innerHTML = `<span style="width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;display:inline-block;animation:spin .7s linear infinite"></span> Generating pass...`
+  btn.disabled = true
+  const style = document.createElement('style')
+  style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}'
+  document.head.appendChild(style)
+  setTimeout(() => {
+    btn.innerHTML = '✓ Added to Wallet — Going to dashboard...'
+    btn.style.background = 'var(--y)'
+    btn.style.color = 'var(--b)'
+    setTimeout(() => go('dashboard'), 1000)
+  }, 1800)
+}
+
+function renderDashboard() {
+  const name = state.legalName || 'Maria Santos'
+  const id = state.sophyeId || 'SPH-2847-MSAN'
+  const handle = state.handle || 'maria-santos'
+  document.getElementById('dash-name').textContent = name
+  document.getElementById('dash-id').textContent = id
+  document.getElementById('dash-profile-url').textContent = `sophye.io/${handle}`
+  // Avatar initials
+  const initials = name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)
+  document.getElementById('dash-avatar').textContent = initials
+  // Badge
+  if (state.pro) {
+    document.getElementById('dash-badge').style.display = 'inline-flex'
+    document.getElementById('dash-badge-txt').textContent = `Verified · ${state.pro}`
+  }
+}
+
+function renderProfile() {
+  const name = state.legalName || 'Maria Santos'
+  const stage = state.stageName || 'MARA'
+  const pro = state.pro || 'ASCAP'
+  const ipi = state.ipi || '00 000 000 250'
+  const sophyeId = state.sophyeId || 'SPH-2847-MSAN'
+  const roles = state.roles.length ? state.roles : ['Songwriter', 'Producer', 'Lead Vocalist']
+  const initials = name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)
+
+  document.getElementById('profile-avatar').textContent = initials
+  document.getElementById('profile-name').textContent = name
+  document.getElementById('profile-aka').textContent = stage ? `Also known as ${stage}` : ''
+  document.getElementById('profile-pro-badge').innerHTML = `<div class="bdg-dot" style="background:var(--b)"></div>Verified · ${pro}`
+
+  document.getElementById('profile-roles').innerHTML = roles.map(r =>
+    `<span style="background:var(--bg);border:1px solid var(--stone);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:6px 10px;border-radius:4px;color:var(--ink)">${r}</span>`
+  ).join('')
+
+  const idRows = [
+    ['PRO', pro, false],
+    ['IPI number', ipi, true],
+    ['ISNI', '0000 0001 2345 6789', true],
+    ['Sophye ID', sophyeId, true],
+  ]
+  document.getElementById('profile-id-table').innerHTML = idRows.map(([l,v,m]) =>
+    `<div class="id-table-row"><span style="font-size:12px;color:var(--mg)">${l}</span><span style="font-size:12px;font-weight:700;color:var(--b)${m ? ';font-family:monospace' : ''}">${v}</span></div>`
+  ).join('')
+
+  document.getElementById('profile-wallet-card').innerHTML = buildWalletCard({
+    name, pro, ipi, sophyeId, sessions: 47,
+    roles: ['Songwriter','Producer','Lead Vocalist'],
+  })
+}
+
+function handleCopy() {
+  const handle = state.handle || 'maria-santos'
+  const url = `sophye.io/${handle}`
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => toast(`Copied: ${url}`))
+  } else {
+    toast(`Your link: ${url}`)
+  }
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast')
+  el.textContent = msg
+  el.classList.add('show')
+  clearTimeout(window._toastTimer)
+  window._toastTimer = setTimeout(() => el.classList.remove('show'), 2600)
+}
+
+/* ── INIT ───────────────────────────────────────────────── */
+// Pre-populate confirmed screen with demo data for the profile preview
+state.legalName = 'Maria Santos'
+state.stageName = 'MARA'
+state.pro = 'ASCAP'
+state.ipi = '00 000 000 250'
+state.sophyeId = 'SPH-2847-MSAN'
+state.handle = 'maria-santos'
+state.roles = ['Songwriter', 'Producer', 'Lead Vocalist']
+state.ipiVerified = true
+
+// Render profile + dashboard on load with demo data
+renderDashboard()
+renderProfile()
+</script>
 </body>
 </html>
